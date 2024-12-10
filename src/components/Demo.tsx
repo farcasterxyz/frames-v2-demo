@@ -35,6 +35,10 @@ export default function Demo(
     useState<FrameNotificationDetails | null>(null);
   const [sendNotificationResult, setSendNotificationResult] = useState("");
 
+  useEffect(() => {
+    setNotificationDetails(context?.client.notificationDetails ?? null);
+  }, [context]);
+
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
 
@@ -74,7 +78,7 @@ export default function Demo(
   useEffect(() => {
     const load = async () => {
       setContext(await sdk.context);
-      sdk.actions.ready();
+      sdk.actions.ready({});
     };
     if (sdk && !isSDKLoaded) {
       setIsSDKLoaded(true);
@@ -96,7 +100,6 @@ export default function Demo(
 
   const addFrame = useCallback(async () => {
     try {
-      // setAddFrameResult("");
       setNotificationDetails(null);
 
       const result = await sdk.actions.addFrame();
@@ -120,7 +123,7 @@ export default function Demo(
 
   const sendNotification = useCallback(async () => {
     setSendNotificationResult("");
-    if (!notificationDetails) {
+    if (!notificationDetails || !context) {
       return;
     }
 
@@ -130,23 +133,25 @@ export default function Demo(
         mode: "same-origin",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          token: notificationDetails.token,
-          url: notificationDetails.url,
-          targetUrl: window.location.href,
+          fid: context.user.fid,
+          notificationDetails,
         }),
       });
 
       if (response.status === 200) {
         setSendNotificationResult("Success");
         return;
+      } else if (response.status === 429) {
+        setSendNotificationResult("Rate limited");
+        return;
       }
 
       const data = await response.text();
-      setSendNotificationResult(`Error: ${data}`);
+      setSendNotificationResult(`Error1: ${data}`);
     } catch (error) {
       setSendNotificationResult(`Error: ${error}`);
     }
-  }, [notificationDetails]);
+  }, [context, notificationDetails]);
 
   const sendTx = useCallback(() => {
     sendTransaction(
@@ -246,6 +251,20 @@ export default function Demo(
           </div>
           <Button onClick={close}>Close Frame</Button>
         </div>
+      </div>
+
+      <div>
+        <h2 className="font-2xl font-bold">Add to client & notifications</h2>
+
+        <div className="mt-2 mb-4 text-sm">
+          Client fid {context?.client.clientFid},
+          {context?.client.added
+            ? " frame added to client,"
+            : " frame not added to client,"}
+          {notificationDetails
+            ? " notifications enabled"
+            : " notifications disabled"}
+        </div>
 
         <div className="mb-4">
           <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
@@ -254,26 +273,26 @@ export default function Demo(
             </pre>
           </div>
           {addFrameResult && (
-            <div className="mb-2">Add frame result: {addFrameResult}</div>
-          )}
-          <Button onClick={addFrame}>Add frame to client</Button>
-        </div>
-      </div>
-
-      {notificationDetails && (
-        <div>
-          <h2 className="font-2xl font-bold">Notify</h2>
-
-          {sendNotificationResult && (
-            <div className="mb-2">
-              Send notification result: {sendNotificationResult}
+            <div className="mb-2 text-sm">
+              Add frame result: {addFrameResult}
             </div>
           )}
-          <div className="mb-4">
-            <Button onClick={sendNotification}>Send notification</Button>
-          </div>
+          <Button onClick={addFrame} disabled={context?.client.added}>
+            Add frame to client
+          </Button>
         </div>
-      )}
+
+        {sendNotificationResult && (
+          <div className="mb-2 text-sm">
+            Send notification result: {sendNotificationResult}
+          </div>
+        )}
+        <div className="mb-4">
+          <Button onClick={sendNotification} disabled={!notificationDetails}>
+            Send notification
+          </Button>
+        </div>
+      </div>
 
       <div>
         <h2 className="font-2xl font-bold">Wallet</h2>
@@ -461,8 +480,10 @@ function SendEth() {
 const renderError = (error: Error | null) => {
   if (!error) return null;
   if (error instanceof BaseError) {
-  const isUserRejection = error.walk((e) => e instanceof UserRejectedRequestError)
-  
+    const isUserRejection = error.walk(
+      (e) => e instanceof UserRejectedRequestError
+    );
+
     if (isUserRejection) {
       return <div className="text-red-500 text-xs mt-1">Rejected by user.</div>;
     }
@@ -470,4 +491,3 @@ const renderError = (error: Error | null) => {
 
   return <div className="text-red-500 text-xs mt-1">{error.message}</div>;
 };
-

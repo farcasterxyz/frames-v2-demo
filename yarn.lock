@@ -105,20 +105,20 @@
     ethereum-cryptography "^2.0.0"
     micro-ftch "^0.3.1"
 
-"@farcaster/frame-core@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@farcaster/frame-core/-/frame-core-0.0.8.tgz#9beb187579788f8cbd97bf7e4669a889f72d5e8d"
-  integrity sha512-89kJFeWnv0d2EPKnjN4j5CwBKxu4rtju6hJh/MtyK82lDxJsS6w4XB4BPw82udrb9rX30ebTCW/VaILhXCWKjQ==
+"@farcaster/frame-core@^0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@farcaster/frame-core/-/frame-core-0.0.11.tgz#f0849c11951bcbc6e855feb2a7399c9567d0d6e7"
+  integrity sha512-Nq32tLjzFZel6trgI+1LZRY14+wn2UqlzCgIudVa9PM3o/RRkQvyJCHtpPsCaktzfcmkJnf12IOmOyhX7Xs+YQ==
   dependencies:
     ox "^0.4.0"
     zod "^3.23.8"
 
-"@farcaster/frame-sdk@^0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@farcaster/frame-sdk/-/frame-sdk-0.0.9.tgz#1e73a3803bfdb3a0f1769be1052e5f969ceeaecc"
-  integrity sha512-DuBxddP1TD0xRaqSCX6gacaatwy9hCjmyC1ED7LMBGo9Zm97N2R6wdJmP9UWM4S2z1AyVx30qY6+kLB/gErroQ==
+"@farcaster/frame-sdk@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@farcaster/frame-sdk/-/frame-sdk-0.0.12.tgz#62f12eaf09c1bff31006327ba50249921207fbca"
+  integrity sha512-+gvCtNHTcEAASIU23dV+CzU0hYmZWQvbmmICGncmNKL2ZUmoYZZtucfUztXViY6h8LcBilLBRJQL+i5VT6xszQ==
   dependencies:
-    "@farcaster/frame-core" "^0.0.8"
+    "@farcaster/frame-core" "^0.0.11"
     comlink "^4.4.2"
     eventemitter3 "^5.0.1"
     ox "^0.4.0"
@@ -1175,6 +1175,13 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
 
+"@upstash/redis@^1.34.3":
+  version "1.34.3"
+  resolved "https://registry.yarnpkg.com/@upstash/redis/-/redis-1.34.3.tgz#df0338f4983bba5141878e851be4fced494b44a0"
+  integrity sha512-VT25TyODGy/8ljl7GADnJoMmtmJ1F8d84UXfGonRRF8fWYJz7+2J6GzW+a6ETGtk4OyuRTt7FRSvFG5GvrfSdQ==
+  dependencies:
+    crypto-js "^4.2.0"
+
 "@wagmi/connectors@5.5.0":
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-5.5.0.tgz#94bf6730dfea0032426230cd45b49183ccefb714"
@@ -1948,6 +1955,11 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
   integrity sha512-HsZgeVYaG+b5zA+9PbIPGq4+J/CJynJuearykPsXx4V/eMhyQ5EDVg3Ak2FBZtVXCiOLu/U7IiwDHTr9MA+IKw==
   dependencies:
     uncrypto "^0.1.3"
+
+crypto-js@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.2.0.tgz#4d931639ecdfd12ff80e8186dba6af2c2e856631"
+  integrity sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==
 
 cssesc@^3.0.0:
   version "3.0.0"
@@ -3857,9 +3869,9 @@ ox@0.1.2:
     eventemitter3 "5.0.1"
 
 ox@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/ox/-/ox-0.4.0.tgz#6c73b27a9f45912888917304d7a81c894856a980"
-  integrity sha512-F+Q8R/7SZ8AvBcejIV6QUcACLjRuFtSShCkwTuCFWLAN5DoS8dSwiFsDBltvQplEXXNGmAEZCV4HDe7orEDSxA==
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/ox/-/ox-0.4.1.tgz#e646e1956b6fba73208d1f19045092c3ad1a6b79"
+  integrity sha512-N6W5Y9j6d7SjW/5lvQfgGNVYqW0oEb70yP9stkNqYICbxqiQvKJgiVYxn2n+yt+PedgcspFd+EtAAk14P4Impg==
   dependencies:
     "@adraffy/ens-normalize" "^1.10.1"
     "@noble/curves" "^1.6.0"
@@ -5254,9 +5266,9 @@ yocto-queue@^0.1.0:
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
 zod@^3.23.8:
-  version "3.23.8"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-3.23.8.tgz#e37b957b5d52079769fb8097099b592f0ef4067d"
-  integrity sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==
+  version "3.24.0"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.24.0.tgz#babb32313f7c5f4a99812feee806d186b4f76bde"
+  integrity sha512-Hz+wiY8yD0VLA2k/+nsg2Abez674dDGTai33SwNvMPuf9uIrBC9eFgIMQxBBbHFxVXi8W+5nX9DcAh9YNSQm/w==
 
 zustand@5.0.0:
   version "5.0.0"

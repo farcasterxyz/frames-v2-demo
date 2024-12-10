@@ -1,14 +1,12 @@
-import {
-  SendNotificationRequest,
-  sendNotificationResponseSchema,
-} from "@farcaster/frame-sdk";
+import { notificationDetailsSchema } from "@farcaster/frame-sdk";
 import { NextRequest } from "next/server";
 import { z } from "zod";
+import { setUserNotificationDetails } from "~/lib/kv";
+import { sendFrameNotification } from "~/lib/notifs";
 
 const requestSchema = z.object({
-  token: z.string(),
-  url: z.string(),
-  targetUrl: z.string(),
+  fid: z.number(),
+  notificationDetails: notificationDetailsSchema,
 });
 
 export async function POST(request: NextRequest) {
@@ -22,45 +20,28 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const response = await fetch(requestBody.data.url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      notificationId: crypto.randomUUID(),
-      title: "Hello from Frames v2!",
-      body: "This is a test notification",
-      targetUrl: requestBody.data.targetUrl,
-      tokens: [requestBody.data.token],
-    } satisfies SendNotificationRequest),
+  await setUserNotificationDetails(
+    requestBody.data.fid,
+    requestBody.data.notificationDetails
+  );
+
+  const sendResult = await sendFrameNotification({
+    fid: requestBody.data.fid,
+    title: "Test notification",
+    body: "Sent at " + new Date().toISOString(),
   });
 
-  const responseJson = await response.json();
-
-  if (response.status === 200) {
-    // Ensure correct response
-    const responseBody = sendNotificationResponseSchema.safeParse(responseJson);
-    if (responseBody.success === false) {
-      return Response.json(
-        { success: false, errors: responseBody.error.errors },
-        { status: 500 }
-      );
-    }
-
-    // Fail when rate limited
-    if (responseBody.data.result.rateLimitedTokens.length) {
-      return Response.json(
-        { success: false, error: "Rate limited" },
-        { status: 429 }
-      );
-    }
-
-    return Response.json({ success: true });
-  } else {
+  if (sendResult.state === "error") {
     return Response.json(
-      { success: false, error: responseJson },
+      { success: false, error: sendResult.error },
       { status: 500 }
     );
+  } else if (sendResult.state === "rate_limit") {
+    return Response.json(
+      { success: false, error: "Rate limited" },
+      { status: 429 }
+    );
   }
+
+  return Response.json({ success: true });
 }
