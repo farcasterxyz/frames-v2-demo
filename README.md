@@ -417,7 +417,7 @@ export default function Demo() {
 When you load this in the Warpcast frames playground, you should see your own Farcaster user profile:
 
 > [!WARNING]
-> For the Framesgiving developer preview, context data is unauthenticated. Assume this data is spoofable and don't use it to grant privileged access to the user! Future frame SDK releases will include a mechanism fo verify context data.
+> For the Framesgiving developer preview, context data is unauthenticated. Assume this data is spoofable and don't use it to grant privileged access to the user! Future frame SDK releases will include a mechanism to verify context data.
 
 <img src="https://raw.githubusercontent.com/farcasterxyz/frames-v2-demo/refs/heads/main/docs/img/6_context.PNG" width="200" alt="Context" />
 
@@ -453,7 +453,7 @@ export default function Demo() {
       <h1 className="text-2xl font-bold text-center mb-4">Frames v2 Demo</h1>
 
       <div className="mb-4">
-        <h2 className="font-2xl font-bold">Context</h2>
+        <h2 className="text-2xl font-bold">Context</h2>
         <button
           onClick={toggleContext}
           className="flex items-center gap-2 transition-colors"
@@ -524,7 +524,7 @@ export default function Demo() {
       {/* context toggle and data */}
 
       <div>
-        <h2 className="font-2xl font-bold">Actions</h2>
+        <h2 className="text-2xl font-bold">Actions</h2>
 
         <div className="mb-4">
           <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">

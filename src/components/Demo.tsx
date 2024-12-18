@@ -201,7 +201,7 @@ export default function Demo(
       <h1 className="text-2xl font-bold text-center mb-4">{title}</h1>
 
       <div className="mb-4">
-        <h2 className="font-2xl font-bold">Context</h2>
+        <h2 className="text-2xl font-bold">Context</h2>
         <button
           onClick={toggleContext}
           className="flex items-center gap-2 transition-colors"
@@ -226,7 +226,7 @@ export default function Demo(
       </div>
 
       <div>
-        <h2 className="font-2xl font-bold">Actions</h2>
+        <h2 className="text-2xl font-bold">Actions</h2>
 
         <div className="mb-4">
           <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
