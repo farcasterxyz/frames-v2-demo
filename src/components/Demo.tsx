@@ -625,13 +625,13 @@ function SignIn() {
       {signInFailure && !signingIn && (
         <div className="my-2 p-2 text-xs overflow-x-scroll bg-gray-100 rounded-lg font-mono">
           <div className="font-semibold text-gray-500 mb-1">SIWF Result</div>
-          <div className="whitespace-pre">{signInFailure}</div>
+          <div className="whitespace-pre text-gray-800">{signInFailure}</div>
         </div>
       )}
       {signInResult && !signingIn && (
         <div className="my-2 p-2 text-xs overflow-x-scroll bg-gray-100 rounded-lg font-mono">
           <div className="font-semibold text-gray-500 mb-1">SIWF Result</div>
-          <div className="whitespace-pre">{JSON.stringify(signInResult, null, 2)}</div>
+          <div className="whitespace-pre text-gray-800">{JSON.stringify(signInResult, null, 2)}</div>
         </div>
       )}
     </>
