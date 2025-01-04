@@ -159,7 +159,7 @@ export default function Demo(
         }
         setAddFrameResult(
           result.notificationDetails
-            ? `Added, got notificaton token ${result.notificationDetails.token} and url ${result.notificationDetails.url}`
+            ? `Added, got notification token ${result.notificationDetails.token} and url ${result.notificationDetails.url}`
             : "Added, got no notification details"
         );
       } else {
