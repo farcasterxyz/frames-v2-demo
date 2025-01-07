@@ -24,7 +24,7 @@ $ yarn dev
 
 To try your app in the Warpcast playground, you'll want to use a tunneling tool like [ngrok](https://ngrok.com/).
 
-[Note: since the free version of ngrok inserts an interstitual, you will need to upgrade to the paid ngrok plan to use it with the Warpcast developer tool.]
+[Note: since the free version of ngrok inserts an interstitial that blocks the frame from loading, you will need to upgrade to the paid ngrok plan to use it with the Warpcast developer tool.]
 
 ## Tutorial
 
