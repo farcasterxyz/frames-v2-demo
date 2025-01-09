@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useCallback, useState, useMemo } from "react";
+import { Input } from "../components/ui/input"
 import { signIn, signOut, getCsrfToken } from "next-auth/react";
 import sdk, {
+    AddFrame,
   FrameNotificationDetails,
-  type FrameContext,
+  SignIn as SignInCore,
+  type Context,
 } from "@farcaster/frame-sdk";
 import {
   useAccount,
@@ -24,14 +27,15 @@ import { truncateAddress } from "~/lib/truncateAddress";
 import { base, optimism } from "wagmi/chains";
 import { BaseError, UserRejectedRequestError } from "viem";
 import { useSession } from "next-auth/react"
-import { SignIn as SignInCore } from "@farcaster/frame-core";
-import { SignInResult } from "@farcaster/frame-core/dist/actions/signIn";
+import { createStore } from 'mipd'
+import { Label } from "~/components/ui/label";
+
 
 export default function Demo(
   { title }: { title?: string } = { title: "Frames v2 Demo" }
 ) {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
-  const [context, setContext] = useState<FrameContext>();
+  const [context, setContext] = useState<Context.FrameContext>();
   const [isContextOpen, setIsContextOpen] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
 
@@ -124,9 +128,21 @@ export default function Demo(
         console.log("primaryButtonClicked");
       });
 
+      console.log("Calling ready");
       sdk.actions.ready({});
+
+// Set up a MIPD Store, and request Providers.
+const store = createStore()
+
+// Subscribe to the MIPD Store.
+store.subscribe(providerDetails => {
+  console.log("PROVIDER DETAILS", providerDetails)
+  // => [EIP6963ProviderDetail, EIP6963ProviderDetail, ...]
+})
+
     };
     if (sdk && !isSDKLoaded) {
+      console.log("Calling load");
       setIsSDKLoaded(true);
       load();
       return () => {
@@ -153,19 +169,23 @@ export default function Demo(
 
       const result = await sdk.actions.addFrame();
 
-      if (result.added) {
-        if (result.notificationDetails) {
-          setNotificationDetails(result.notificationDetails);
-        }
-        setAddFrameResult(
-          result.notificationDetails
-            ? `Added, got notificaton token ${result.notificationDetails.token} and url ${result.notificationDetails.url}`
-            : "Added, got no notification details"
-        );
-      } else {
-        setAddFrameResult(`Not added: ${result.reason}`);
+      if (result.notificationDetails) {
+        setNotificationDetails(result.notificationDetails);
       }
+      setAddFrameResult(
+        result.notificationDetails
+          ? `Added, got notificaton token ${result.notificationDetails.token} and url ${result.notificationDetails.url}`
+          : "Added, got no notification details"
+      );
     } catch (error) {
+      if (error instanceof AddFrame.RejectedByUser) {
+        setAddFrameResult(`Not added: ${error.message}`);
+      }
+      
+      if (error instanceof AddFrame.InvalidDomainManifest) {
+        setAddFrameResult(`Not added: ${error.message}`);
+      }
+
       setAddFrameResult(`Error: ${error}`);
     }
   }, []);
@@ -243,204 +263,220 @@ export default function Demo(
   }
 
   return (
-    <div className="w-[300px] mx-auto py-4 px-2">
-      <h1 className="text-2xl font-bold text-center mb-4">{title}</h1>
+    <div style={{ 
+      paddingTop: context?.client.safeAreaInsets?.top ?? 0, 
+      paddingBottom: context?.client.safeAreaInsets?.bottom ?? 0,
+      paddingLeft: context?.client.safeAreaInsets?.left ?? 0,
+      paddingRight: context?.client.safeAreaInsets?.right ?? 0 ,
+    }}>
+      <div className="w-[300px] mx-auto py-2 px-2">
+        <h1 className="text-2xl font-bold text-center mb-4">{title}</h1>
 
-      <div className="mb-4">
-        <h2 className="font-2xl font-bold">Context</h2>
-        <button
-          onClick={toggleContext}
-          className="flex items-center gap-2 transition-colors"
-        >
-          <span
-            className={`transform transition-transform ${
-              isContextOpen ? "rotate-90" : ""
-            }`}
+        <div className="mb-4">
+          <h2 className="font-2xl font-bold">Context</h2>
+          <button
+            onClick={toggleContext}
+            className="flex items-center gap-2 transition-colors"
           >
-            ➤
-          </span>
-          Tap to expand
-        </button>
+            <span
+              className={`transform transition-transform ${
+                isContextOpen ? "rotate-90" : ""
+              }`}
+            >
+              ➤
+            </span>
+            Tap to expand
+          </button>
 
-        {isContextOpen && (
-          <div className="p-4 mt-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
-            <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-              {JSON.stringify(context, null, 2)}
-            </pre>
-          </div>
-        )}
-      </div>
-
-      <div>
-        <h2 className="font-2xl font-bold">Actions</h2>
-
-        <div className="mb-4">
-          <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-            <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-              sdk.actions.signIn
-            </pre>
-          </div>
-          <SignIn />
-        </div>
-
-        <div className="mb-4">
-          <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-            <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-              sdk.actions.openUrl
-            </pre>
-          </div>
-          <Button onClick={openUrl}>Open Link</Button>
-        </div>
-
-        <div className="mb-4">
-          <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-            <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-              sdk.actions.openUrl
-            </pre>
-          </div>
-          <Button onClick={openWarpcastUrl}>Open Warpcast Link</Button>
-        </div>
-
-        <div className="mb-4">
-          <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-            <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-              sdk.actions.close
-            </pre>
-          </div>
-          <Button onClick={close}>Close Frame</Button>
-        </div>
-      </div>
-
-      <div className="mb-4">
-        <h2 className="font-2xl font-bold">Last event</h2>
-
-        <div className="p-4 mt-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
-          <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-            {lastEvent || "none"}
-          </pre>
-        </div>
-      </div>
-
-      <div>
-        <h2 className="font-2xl font-bold">Add to client & notifications</h2>
-
-        <div className="mt-2 mb-4 text-sm">
-          Client fid {context?.client.clientFid},
-          {added ? " frame added to client," : " frame not added to client,"}
-          {notificationDetails
-            ? " notifications enabled"
-            : " notifications disabled"}
-        </div>
-
-        <div className="mb-4">
-          <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
-            <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
-              sdk.actions.addFrame
-            </pre>
-          </div>
-          {addFrameResult && (
-            <div className="mb-2 text-sm">
-              Add frame result: {addFrameResult}
+          {isContextOpen && (
+            <div className="p-4 mt-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+                {JSON.stringify(context, null, 2)}
+              </pre>
             </div>
           )}
-          <Button onClick={addFrame} disabled={added}>
-            Add frame to client
-          </Button>
         </div>
 
-        {sendNotificationResult && (
-          <div className="mb-2 text-sm">
-            Send notification result: {sendNotificationResult}
-          </div>
-        )}
-        <div className="mb-4">
-          <Button onClick={sendNotification} disabled={!notificationDetails}>
-            Send notification
-          </Button>
-        </div>
-      </div>
+        <div>
+          <h2 className="font-2xl font-bold">Actions</h2>
 
-      <div>
-        <h2 className="font-2xl font-bold">Wallet</h2>
-
-        {address && (
-          <div className="my-2 text-xs">
-            Address: <pre className="inline">{truncateAddress(address)}</pre>
-          </div>
-        )}
-
-        {chainId && (
-          <div className="my-2 text-xs">
-            Chain ID: <pre className="inline">{chainId}</pre>
-          </div>
-        )}
-
-        <div className="mb-4">
-          <Button
-            onClick={() =>
-              isConnected
-                ? disconnect()
-                : connect({ connector: config.connectors[0] })
-            }
-          >
-            {isConnected ? "Disconnect" : "Connect"}
-          </Button>
-        </div>
-
-        <div className="mb-4">
-          <SignMessage />
-        </div>
-
-        {isConnected && (
-          <>
-            <div className="mb-4">
-              <SendEth />
+          <div className="mb-4">
+            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+                sdk.actions.signIn
+              </pre>
             </div>
-            <div className="mb-4">
-              <Button
-                onClick={sendTx}
-                disabled={!isConnected || isSendTxPending}
-                isLoading={isSendTxPending}
-              >
-                Send Transaction (contract)
-              </Button>
-              {isSendTxError && renderError(sendTxError)}
-              {txHash && (
-                <div className="mt-2 text-xs">
-                  <div>Hash: {truncateAddress(txHash)}</div>
-                  <div>
-                    Status:{" "}
-                    {isConfirming
-                      ? "Confirming..."
-                      : isConfirmed
-                      ? "Confirmed!"
-                      : "Pending"}
+            <SignIn />
+          </div>
+
+          <div className="mb-4">
+            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+                sdk.actions.openUrl
+              </pre>
+            </div>
+            <Button onClick={openUrl}>Open Link</Button>
+          </div>
+
+          <div className="mb-4">
+            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+                sdk.actions.openUrl
+              </pre>
+            </div>
+            <Button onClick={openWarpcastUrl}>Open Warpcast Link</Button>
+          </div>
+
+          <div className="mb-4">
+            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+                sdk.actions.viewProfile
+              </pre>
+            </div>
+            <ViewProfile />
+          </div>
+
+          <div className="mb-4">
+            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+                sdk.actions.close
+              </pre>
+            </div>
+            <Button onClick={close}>Close Frame</Button>
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <h2 className="font-2xl font-bold">Last event</h2>
+
+          <div className="p-4 mt-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+              {lastEvent || "none"}
+            </pre>
+          </div>
+        </div>
+
+        <div>
+          <h2 className="font-2xl font-bold">Add to client & notifications</h2>
+
+          <div className="mt-2 mb-4 text-sm">
+            Client fid {context?.client.clientFid},
+            {added ? " frame added to client," : " frame not added to client,"}
+            {notificationDetails
+              ? " notifications enabled"
+              : " notifications disabled"}
+          </div>
+
+          <div className="mb-4">
+            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+                sdk.actions.addFrame
+              </pre>
+            </div>
+            {addFrameResult && (
+              <div className="mb-2 text-sm">
+                Add frame result: {addFrameResult}
+              </div>
+            )}
+            <Button onClick={addFrame} disabled={added}>
+              Add frame to client
+            </Button>
+          </div>
+
+          {sendNotificationResult && (
+            <div className="mb-2 text-sm">
+              Send notification result: {sendNotificationResult}
+            </div>
+          )}
+          <div className="mb-4">
+            <Button onClick={sendNotification} disabled={!notificationDetails}>
+              Send notification
+            </Button>
+          </div>
+        </div>
+
+        <div>
+          <h2 className="font-2xl font-bold">Wallet</h2>
+
+          {address && (
+            <div className="my-2 text-xs">
+              Address: <pre className="inline">{truncateAddress(address)}</pre>
+            </div>
+          )}
+
+          {chainId && (
+            <div className="my-2 text-xs">
+              Chain ID: <pre className="inline">{chainId}</pre>
+            </div>
+          )}
+
+          <div className="mb-4">
+            <Button
+              onClick={() =>
+                isConnected
+                  ? disconnect()
+                  : connect({ connector: config.connectors[0] })
+              }
+            >
+              {isConnected ? "Disconnect" : "Connect"}
+            </Button>
+          </div>
+
+          <div className="mb-4">
+            <SignMessage />
+          </div>
+
+          {isConnected && (
+            <>
+              <div className="mb-4">
+                <SendEth />
+              </div>
+              <div className="mb-4">
+                <Button
+                  onClick={sendTx}
+                  disabled={!isConnected || isSendTxPending}
+                  isLoading={isSendTxPending}
+                >
+                  Send Transaction (contract)
+                </Button>
+                {isSendTxError && renderError(sendTxError)}
+                {txHash && (
+                  <div className="mt-2 text-xs">
+                    <div>Hash: {truncateAddress(txHash)}</div>
+                    <div>
+                      Status:{" "}
+                      {isConfirming
+                        ? "Confirming..."
+                        : isConfirmed
+                        ? "Confirmed!"
+                        : "Pending"}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-            <div className="mb-4">
-              <Button
-                onClick={signTyped}
-                disabled={!isConnected || isSignTypedPending}
-                isLoading={isSignTypedPending}
-              >
-                Sign Typed Data
-              </Button>
-              {isSignTypedError && renderError(signTypedError)}
-            </div>
-            <div className="mb-4">
-              <Button
-                onClick={handleSwitchChain}
-                disabled={isSwitchChainPending}
-                isLoading={isSwitchChainPending}
-              >
-                Switch to {chainId === base.id ? "Optimism" : "Base"}
-              </Button>
-              {isSwitchChainError && renderError(switchChainError)}
-            </div>
-          </>
-        )}
+                )}
+              </div>
+              <div className="mb-4">
+                <Button
+                  onClick={signTyped}
+                  disabled={!isConnected || isSignTypedPending}
+                  isLoading={isSignTypedPending}
+                >
+                  Sign Typed Data
+                </Button>
+                {isSignTypedError && renderError(signTypedError)}
+              </div>
+              <div className="mb-4">
+                <Button
+                  onClick={handleSwitchChain}
+                  disabled={isSwitchChainPending}
+                  isLoading={isSwitchChainPending}
+                >
+                  Switch to {chainId === base.id ? "Optimism" : "Base"}
+                </Button>
+                {isSwitchChainError && renderError(switchChainError)}
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -546,7 +582,7 @@ function SendEth() {
 function SignIn() {
   const [signingIn, setSigningIn] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
-  const [signInResult, setSignInResult] = useState<SignInResult>();
+  const [signInResult, setSignInResult] = useState<SignInCore.SignInResult>();
   const [signInFailure, setSignInFailure] = useState<string>();
   const { data: session, status } = useSession()
 
@@ -631,6 +667,33 @@ function SignIn() {
   );
 }
 
+function ViewProfile() {
+  const [fid, setFid] = useState('3');
+
+  return (
+    <>
+      <div>
+        <Label className="text-xs font-semibold text-gray-500 mb-1" htmlFor="view-profile-fid">Fid</Label>
+        <Input
+          id="view-profile-fid"
+          type="number"
+          value={fid}
+          className="mb-2"
+          onChange={(e) => { 
+            setFid(e.target.value)
+          }}
+          step="1"
+          min="1"
+        />
+      </div>
+      <Button
+        onClick={() => { sdk.actions.viewProfile({ fid: parseInt(fid) }) }}
+      >
+        View Profile
+      </Button>
+    </>
+  );
+}
 
 const renderError = (error: Error | null) => {
   if (!error) return null;
