@@ -1,4 +1,4 @@
-import { AuthOptions, getServerSession } from "next-auth"
+import { AuthOptions, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { createAppClient, viemConnector } from "@farcaster/auth-client";
 
@@ -11,7 +11,10 @@ declare module "next-auth" {
 }
 
 export const authOptions: AuthOptions = {
-    // Configure one or more authentication providers
+  // Configure one or more authentication providers
+
+  // Fix: Add secret to Auth.ts for secure NextAuth.js configuration in production
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "Sign in with Farcaster",
@@ -49,7 +52,7 @@ export const authOptions: AuthOptions = {
         const verifyResponse = await appClient.verifySignInMessage({
           message: credentials?.message as string,
           signature: credentials?.signature as `0x${string}`,
-          domain: new URL(process.env.NEXTAUTH_URL ?? '').hostname,
+          domain: new URL(process.env.NEXTAUTH_URL ?? "").hostname,
           nonce: csrfToken,
         });
         const { success, fid } = verifyResponse;
@@ -67,11 +70,11 @@ export const authOptions: AuthOptions = {
   callbacks: {
     session: async ({ session, token }) => {
       if (session?.user) {
-        session.user.fid = parseInt(token.sub ?? '');
+        session.user.fid = parseInt(token.sub ?? "");
       }
       return session;
     },
-  }
-}
+  },
+};
 
-export const getSession = () => getServerSession(authOptions)
+export const getSession = () => getServerSession(authOptions);
