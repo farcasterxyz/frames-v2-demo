@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3012",
+    "dev": "next dev --turbopack -p 3012",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@farcaster/auth-client": "^0.3.0",
     "@farcaster/auth-kit": "^0.6.0",
     "@farcaster/frame-core": "^0.0.27",
     "@farcaster/frame-node": "^0.0.16",
@@ -21,6 +23,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.476.0",
+    "mipd": "^0.0.7",
     "next": "15.2.0",
     "next-auth": "^4.24.11",
     "ox": "^0.6.9",
@@ -29,7 +32,8 @@
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
     "viem": "^2.23.5",
-    "wagmi": "^2.14.12"
+    "wagmi": "^2.14.12",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/node": "^22.13.5",

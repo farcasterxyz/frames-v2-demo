@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@farcaster/auth-client':
+    specifier: ^0.3.0
+    version: 0.3.0(ethers@6.13.5)(viem@2.23.5)
   '@farcaster/auth-kit':
     specifier: ^0.6.0
     version: 0.6.0(@types/react@18.3.18)(react-dom@18.3.1)(react@18.3.1)(viem@2.23.5)
@@ -16,7 +19,7 @@ dependencies:
     version: 0.0.16(typescript@5.7.3)
   '@farcaster/frame-sdk':
     specifier: ^0.0.29
-    version: 0.0.29(typescript@5.7.3)
+    version: 0.0.29(typescript@5.7.3)(zod@3.24.2)
   '@farcaster/frame-wagmi-connector':
     specifier: ^0.0.17
     version: 0.0.17(@farcaster/frame-sdk@0.0.29)(@wagmi/core@2.16.5)(viem@2.23.5)
@@ -41,6 +44,9 @@ dependencies:
   lucide-react:
     specifier: ^0.476.0
     version: 0.476.0(react@18.3.1)
+  mipd:
+    specifier: ^0.0.7
+    version: 0.0.7(typescript@5.7.3)
   next:
     specifier: 15.2.0
     version: 15.2.0(react-dom@18.3.1)(react@18.3.1)
@@ -49,7 +55,7 @@ dependencies:
     version: 4.24.11(next@15.2.0)(react-dom@18.3.1)(react@18.3.1)
   ox:
     specifier: ^0.6.9
-    version: 0.6.9(typescript@5.7.3)
+    version: 0.6.9(typescript@5.7.3)(zod@3.24.2)
   react:
     specifier: ^18.3.1
     version: 18.3.1
@@ -64,10 +70,13 @@ dependencies:
     version: 1.0.7(tailwindcss@4.0.9)
   viem:
     specifier: ^2.23.5
-    version: 2.23.5(typescript@5.7.3)
+    version: 2.23.5(typescript@5.7.3)(zod@3.24.2)
   wagmi:
     specifier: ^2.14.12
-    version: 2.14.12(@tanstack/react-query@5.66.9)(@types/react@18.3.18)(@upstash/redis@1.34.4)(react@18.3.1)(typescript@5.7.3)(viem@2.23.5)
+    version: 2.14.12(@tanstack/react-query@5.66.9)(@types/react@18.3.18)(@upstash/redis@1.34.4)(react@18.3.1)(typescript@5.7.3)(viem@2.23.5)(zod@3.24.2)
+  zod:
+    specifier: ^3.24.2
+    version: 3.24.2
 
 devDependencies:
   '@types/node':
@@ -272,7 +281,7 @@ packages:
       ethers: 6.13.5
       neverthrow: 6.2.2
       siwe: 2.3.2(ethers@6.13.5)
-      viem: 2.23.5(typescript@5.7.3)
+      viem: 2.23.5(typescript@5.7.3)(zod@3.24.2)
     dev: false
 
   /@farcaster/auth-kit@0.6.0(@types/react@18.3.18)(react-dom@18.3.1)(react@18.3.1)(viem@2.23.5):
@@ -316,7 +325,7 @@ packages:
       - typescript
     dev: false
 
-  /@farcaster/frame-sdk@0.0.29(typescript@5.7.3):
+  /@farcaster/frame-sdk@0.0.29(typescript@5.7.3)(zod@3.24.2):
     resolution: {integrity: sha512-Veom3+tPTOlzKmCSQoZgMG8pe+E95SzB2uK6DP9b7lMSvSQ2Q1eavB8sF3G7IeAqHlAot8GZ2ayF0uRKWqaonA==}
     dependencies:
       '@farcaster/frame-core': 0.0.27(typescript@5.7.3)
@@ -335,9 +344,9 @@ packages:
       '@wagmi/core': ^2.14.1
       viem: ^2.21.55
     dependencies:
-      '@farcaster/frame-sdk': 0.0.29(typescript@5.7.3)
+      '@farcaster/frame-sdk': 0.0.29(typescript@5.7.3)(zod@3.24.2)
       '@wagmi/core': 2.16.5(@types/react@18.3.18)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0)(viem@2.23.5)
-      viem: 2.23.5(typescript@5.7.3)
+      viem: 2.23.5(typescript@5.7.3)(zod@3.24.2)
     dev: false
 
   /@humanfs/core@0.19.1:
@@ -1058,10 +1067,10 @@ packages:
     resolution: {integrity: sha512-kkKUDVlII2DQiKy7UstOR1ErJP8kUKAQ4oa+SQtM0K+lPdmmjj0YnnxBgtTVYH7mUKtbsxeFC9y0AmK7Yb78/A==}
     dev: true
 
-  /@safe-global/safe-apps-provider@0.18.5(typescript@5.7.3):
+  /@safe-global/safe-apps-provider@0.18.5(typescript@5.7.3)(zod@3.24.2):
     resolution: {integrity: sha512-9v9wjBi3TwLsEJ3C2ujYoexp3pFJ0omDLH/GX91e2QB+uwCKTBYyhxFSrTQ9qzoyQd+bfsk4gjOGW87QcJhf7g==}
     dependencies:
-      '@safe-global/safe-apps-sdk': 9.1.0(typescript@5.7.3)
+      '@safe-global/safe-apps-sdk': 9.1.0(typescript@5.7.3)(zod@3.24.2)
       events: 3.3.0
     transitivePeerDependencies:
       - bufferutil
@@ -1070,11 +1079,11 @@ packages:
       - zod
     dev: false
 
-  /@safe-global/safe-apps-sdk@9.1.0(typescript@5.7.3):
+  /@safe-global/safe-apps-sdk@9.1.0(typescript@5.7.3)(zod@3.24.2):
     resolution: {integrity: sha512-N5p/ulfnnA2Pi2M3YeWjULeWbjo7ei22JwU/IXnhoHzKq3pYCN6ynL9mJBOlvDVv892EgLPCWCOwQk/uBT2v0Q==}
     dependencies:
       '@safe-global/safe-gateway-typescript-sdk': 3.22.9
-      viem: 2.23.5(typescript@5.7.3)
+      viem: 2.23.5(typescript@5.7.3)(zod@3.24.2)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -1611,7 +1620,7 @@ packages:
     resolution: {integrity: sha512-ytsG/JLweEjw7DBuZ/0JCN4WAQgM9erfSTdS1NQY778hFQSZ6cfCDEZZ0sgVm4k54uNz6ImKB33AYvSR//fjxw==}
     dev: false
 
-  /@wagmi/connectors@5.7.8(@types/react@18.3.18)(@upstash/redis@1.34.4)(@wagmi/core@2.16.5)(react@18.3.1)(typescript@5.7.3)(viem@2.23.5):
+  /@wagmi/connectors@5.7.8(@types/react@18.3.18)(@upstash/redis@1.34.4)(@wagmi/core@2.16.5)(react@18.3.1)(typescript@5.7.3)(viem@2.23.5)(zod@3.24.2):
     resolution: {integrity: sha512-idLCc+GQ/GcGgxakEMC7/NSbpD6r1GB07lfDyEjvI5TMzl18pOZhKiqOTENzNi3hDas6ZMvS1xaGwrWufsb1rA==}
     peerDependencies:
       '@wagmi/core': 2.16.5
@@ -1623,13 +1632,13 @@ packages:
     dependencies:
       '@coinbase/wallet-sdk': 4.3.0
       '@metamask/sdk': 0.32.0
-      '@safe-global/safe-apps-provider': 0.18.5(typescript@5.7.3)
-      '@safe-global/safe-apps-sdk': 9.1.0(typescript@5.7.3)
+      '@safe-global/safe-apps-provider': 0.18.5(typescript@5.7.3)(zod@3.24.2)
+      '@safe-global/safe-apps-sdk': 9.1.0(typescript@5.7.3)(zod@3.24.2)
       '@wagmi/core': 2.16.5(@types/react@18.3.18)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0)(viem@2.23.5)
       '@walletconnect/ethereum-provider': 2.17.0(@types/react@18.3.18)(@upstash/redis@1.34.4)(react@18.3.1)
       cbw-sdk: /@coinbase/wallet-sdk@3.9.3
       typescript: 5.7.3
-      viem: 2.23.5(typescript@5.7.3)
+      viem: 2.23.5(typescript@5.7.3)(zod@3.24.2)
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -1673,7 +1682,7 @@ packages:
       eventemitter3: 5.0.1
       mipd: 0.0.7(typescript@5.7.3)
       typescript: 5.7.3
-      viem: 2.23.5(typescript@5.7.3)
+      viem: 2.23.5(typescript@5.7.3)(zod@3.24.2)
       zustand: 5.0.0(@types/react@18.3.18)(react@18.3.1)(use-sync-external-store@1.4.0)
     transitivePeerDependencies:
       - '@types/react'
@@ -4473,7 +4482,7 @@ packages:
       - zod
     dev: false
 
-  /ox@0.6.7(typescript@5.7.3):
+  /ox@0.6.7(typescript@5.7.3)(zod@3.24.2):
     resolution: {integrity: sha512-17Gk/eFsFRAZ80p5eKqv89a57uXjd3NgIf1CaXojATPBuujVc/fQSVhBeAU9JCRB+k7J50WQAyWTxK19T9GgbA==}
     peerDependencies:
       typescript: '>=5.4.0'
@@ -4493,7 +4502,7 @@ packages:
       - zod
     dev: false
 
-  /ox@0.6.9(typescript@5.7.3):
+  /ox@0.6.9(typescript@5.7.3)(zod@3.24.2):
     resolution: {integrity: sha512-wi5ShvzE4eOcTwQVsIPdFr+8ycyX+5le/96iAJutaZAvCes1J0+RvpEPg5QDPDiaR0XQQAvZVl7AwqQcINuUug==}
     peerDependencies:
       typescript: '>=5.4.0'
@@ -5666,7 +5675,7 @@ packages:
       use-sync-external-store: 1.2.0(react@18.3.1)
     dev: false
 
-  /viem@2.23.5(typescript@5.7.3):
+  /viem@2.23.5(typescript@5.7.3)(zod@3.24.2):
     resolution: {integrity: sha512-cUfBHdFQHmBlPW0loFXda0uZcoU+uJw3NRYQRwYgkrpH6PgovH8iuVqDn6t1jZk82zny4wQL54c9dCX2W9kLMg==}
     peerDependencies:
       typescript: '>=5.0.4'
@@ -5680,7 +5689,7 @@ packages:
       '@scure/bip39': 1.5.4
       abitype: 1.0.8(typescript@5.7.3)(zod@3.24.2)
       isows: 1.0.6(ws@8.18.0)
-      ox: 0.6.7(typescript@5.7.3)
+      ox: 0.6.7(typescript@5.7.3)(zod@3.24.2)
       typescript: 5.7.3
       ws: 8.18.0
     transitivePeerDependencies:
@@ -5689,7 +5698,7 @@ packages:
       - zod
     dev: false
 
-  /wagmi@2.14.12(@tanstack/react-query@5.66.9)(@types/react@18.3.18)(@upstash/redis@1.34.4)(react@18.3.1)(typescript@5.7.3)(viem@2.23.5):
+  /wagmi@2.14.12(@tanstack/react-query@5.66.9)(@types/react@18.3.18)(@upstash/redis@1.34.4)(react@18.3.1)(typescript@5.7.3)(viem@2.23.5)(zod@3.24.2):
     resolution: {integrity: sha512-HSX7CkwF7YWecV5EqcOQrHUSGqZ+f8GJ8FWRYktVcxitfaAd0YofwfJNJB+zEsV17hV6uZ5Tu1nP32tgz+1eTQ==}
     peerDependencies:
       '@tanstack/react-query': '>=5.0.0'
@@ -5701,12 +5710,12 @@ packages:
         optional: true
     dependencies:
       '@tanstack/react-query': 5.66.9(react@18.3.1)
-      '@wagmi/connectors': 5.7.8(@types/react@18.3.18)(@upstash/redis@1.34.4)(@wagmi/core@2.16.5)(react@18.3.1)(typescript@5.7.3)(viem@2.23.5)
+      '@wagmi/connectors': 5.7.8(@types/react@18.3.18)(@upstash/redis@1.34.4)(@wagmi/core@2.16.5)(react@18.3.1)(typescript@5.7.3)(viem@2.23.5)(zod@3.24.2)
       '@wagmi/core': 2.16.5(@types/react@18.3.18)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0)(viem@2.23.5)
       react: 18.3.1
       typescript: 5.7.3
       use-sync-external-store: 1.4.0(react@18.3.1)
-      viem: 2.23.5(typescript@5.7.3)
+      viem: 2.23.5(typescript@5.7.3)(zod@3.24.2)
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
