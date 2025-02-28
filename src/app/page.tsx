@@ -1,18 +1,19 @@
 import { Metadata } from "next";
 import App from "./app";
 
-const appUrl = process.env.NEXT_PUBLIC_URL;
+// const appUrl = process.env.NEXT_PUBLIC_URL;
+const appUrl = process.env.VERCEL_URL;
 
 const frame = {
   version: "next",
-  imageUrl: `${appUrl}/opengraph-image`,
+  imageUrl: `https://${appUrl}/opengraph-image`,
   button: {
     title: "Launch Frame",
     action: {
       type: "launch_frame",
       name: "Farcaster Frames v2 Demo",
-      url: appUrl,
-      splashImageUrl: `${appUrl}/splash.png`,
+      url: `https://${appUrl}`,
+      splashImageUrl: `https://${appUrl}/splash.png`,
       splashBackgroundColor: "#f7f7f7",
     },
   },
@@ -34,5 +35,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function Home() {
-  return (<App />);
+  return <App />;
 }
