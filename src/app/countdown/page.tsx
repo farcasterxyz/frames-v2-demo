@@ -13,7 +13,7 @@ const frame = {
     action: {
       type: "launch_frame",
       name: "Countdown Frame",
-      url: `${appUrl}`,
+      url: `${appUrl}/countdown`,
       splashImageUrl: `${appUrl}/splash.png`,
       splashBackgroundColor: "#f7f7f7",
     },
