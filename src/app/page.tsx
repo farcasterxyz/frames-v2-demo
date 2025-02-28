@@ -11,7 +11,7 @@ const frame = {
     title: "Launch Frame",
     action: {
       type: "launch_frame",
-      name: "Farcaster Frames v2 Demo",
+      name: "Coordinape Frames v2 Demo",
       url: `https://${appUrl}`,
       splashImageUrl: `https://${appUrl}/splash.png`,
       splashBackgroundColor: "#f7f7f7",
