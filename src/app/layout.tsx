@@ -5,7 +5,7 @@ import "~/app/globals.css";
 import { Providers } from "~/app/providers";
 
 export const metadata: Metadata = {
-  title: "Farcaster Frames v2 Demo",
+  title: "Farcaster livmore",
   description: "A Farcaster Frames v2 demo app",
 };
 
