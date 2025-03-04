@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import gql from "graphql-tag";
+import { ApolloClient, InMemoryCache, HttpLink } from "apollo-boost";
+import { Query, ApolloProvider } from "react-apollo";
 
 const STAR_COUNT = 100;
 const FALL_DURATION = 5000; // Duration for stars to fall in milliseconds
@@ -44,6 +47,27 @@ const QUOTES = [
   "The time is always right to do what is right. - Martin Luther King Jr.",
 ];
 
+// Apollo client setup
+const apolloClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: new HttpLink({
+    uri: "https://coordinape-prod.hasura.app/v1/graphql",
+    headers: {
+      Authorization: "anon",
+    },
+  }),
+});
+
+const CO_SOULS_QUERY = gql`
+  query CoSouls {
+    cosouls(limit: 10) {
+      token_id
+      id
+      address
+    }
+  }
+`;
+
 const generateStars = () => {
   return Array.from({ length: STAR_COUNT }, () => ({
     id: Math.random(),
@@ -53,10 +77,47 @@ const generateStars = () => {
   }));
 };
 
-export default function Countdown() {
+// GraphQL query component
+const CoSoulsDisplay = () => {
+  return (
+    <Query query={CO_SOULS_QUERY}>
+      {({ loading, error, data }) => {
+        if (loading)
+          return <div className="text-white">Loading CoSouls data...</div>;
+        if (error)
+          return <div className="text-white">Error loading CoSouls data</div>;
+
+        if (data) {
+          return (
+            <div className="mt-4 bg-black/50 p-4 rounded-lg overflow-auto max-h-48">
+              <h2 className="text-white font-bold mb-2">CoSouls Data</h2>
+              <div className="text-xs text-white">
+                {data.cosouls.map((soul: any) => (
+                  <div key={soul.id} className="mb-1">
+                    ID: {soul.token_id} - Address:{" "}
+                    {soul.address.substring(0, 8)}...
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        }
+
+        return null;
+      }}
+    </Query>
+  );
+};
+
+const CountdownContent = () => {
   const [timeLeft, setTimeLeft] = useState(0);
-  const [stars] = useState(generateStars);
-  const [quote] = useState(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
+  const [stars, setStars] = useState([]);
+  const [quote, setQuote] = useState("");
+
+  useEffect(() => {
+    setStars(generateStars());
+    setQuote(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
+  }, []);
 
   // Update countdown based on current time
   useEffect(() => {
@@ -106,6 +167,7 @@ export default function Countdown() {
             <span className="opacity-50">{fadedDigits}</span>
             <span className="text-2xl ml-2">ms</span>
           </p>
+          <CoSoulsDisplay />
         </div>
       </div>
 
@@ -131,5 +193,14 @@ export default function Countdown() {
         }
       `}</style>
     </div>
+  );
+};
+
+// Wrap the component with ApolloProvider
+export default function Countdown() {
+  return (
+    <ApolloProvider client={apolloClient}>
+      <CountdownContent />
+    </ApolloProvider>
   );
 }
