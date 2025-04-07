@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  address       String    @unique // Ethereum wallet address
+  username      String?
+  farcasterFid  Int?      @unique // Farcaster ID
+  fcastUsername String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Game related fields
+  coins         Int       @default(3) // Daily coins
+  lastCoinReset DateTime? // When coins were last reset
+  highScores    HighScore[]
+}
+
+model HighScore {
+  id        String   @id @default(uuid())
+  score     Int
+  gameDate  DateTime @default(now())
+  
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+// Archive of weekly leaderboards
+model LeaderboardArchive {
+  id         String   @id @default(uuid())
+  weekNumber Int      // ISO week number (1-53)
+  year       Int      // Year of the leaderboard
+  scores     String   // JSON string of top scores
+  createdAt  DateTime @default(now())
+}
+
+// System configuration for various settings
+model SystemConfig {
+  key       String   @id // Configuration key
+  value     String   // Configuration value
+  updatedAt DateTime @updatedAt
+}
