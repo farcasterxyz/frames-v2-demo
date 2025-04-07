@@ -1,0 +1,18 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjU0MDExOCwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDRjNjcwZDg1ZGQ2MzJlZmQwODVmODdjYWE1NGQ0Y2M5MTExZTkzYjgifQ",
+    "payload": "eyJkb21haW4iOiJ6b21iaWVkZWZlbnNlLnJlcGxpdC5hcHAifQ",
+    "signature": ""
+  },
+  "frame": {
+    "name": "Zombie Defense",
+    "version": "1",
+    "iconUrl": "https://zombiedefense.replit.app/icon.png",
+    "homeUrl": "https://zombiedefense.replit.app",
+    "imageUrl": "https://zombiedefense.replit.app/image.png",
+    "buttonTitle": "PLAY",
+    "splashImageUrl": "https://zombiedefense.replit.app/splash.png",
+    "splashBackgroundColor": "#FFFFFF",
+    "webhookUrl": "https://zombiedefense.replit.app/api/webhook"
+  }
+}
