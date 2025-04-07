@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#331800" />
+      <stop offset="100%" stop-color="#000000" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg-gradient)" />
+  
+  <!-- Zombie silhouettes in background -->
+  <g opacity="0.3">
+    <path d="M200,500 L230,450 L260,500 L290,450 L320,500 L350,450 L380,500 L380,580 L200,580 Z" fill="#1a4d1a" />
+    <path d="M800,520 L830,470 L860,520 L890,470 L920,520 L950,470 L980,520 L980,600 L800,600 Z" fill="#1a4d1a" />
+    <path d="M500,540 L530,490 L560,540 L590,490 L620,540 L650,490 L680,540 L680,620 L500,620 Z" fill="#1a4d1a" />
+  </g>
+  
+  <!-- Title -->
+  <text x="600" y="200" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#ff3333" text-anchor="middle">ZOMBIE DEFENSE</text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="270" font-family="Arial, sans-serif" font-size="36" fill="#aaaaaa" text-anchor="middle">Protect the survivors, eliminate the undead</text>
+  
+  <!-- Gun graphic -->
+  <g transform="translate(600, 400) scale(2)">
+    <rect x="-25" y="0" width="50" height="30" fill="#666666" rx="5" ry="5" />
+    <rect x="-10" y="-15" width="20" height="20" fill="#444444" />
+    <rect x="-35" y="20" width="70" height="15" fill="#888888" rx="5" ry="5" />
+  </g>
+  
+  <!-- Instructions -->
+  <text x="600" y="530" font-family="Arial, sans-serif" font-size="24" fill="#ffffff" text-anchor="middle">Click "Play Game" to start or "View High Scores" to see the leaderboard</text>
+  
+  <!-- Footer -->
+  <text x="600" y="590" font-family="Arial, sans-serif" font-size="18" fill="#aaaaaa" text-anchor="middle">A Farcaster Frame Game</text>
+</svg>
