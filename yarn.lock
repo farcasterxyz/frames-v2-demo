@@ -134,38 +134,38 @@
     qrcode "^1.5.3"
     react-remove-scroll "^2.5.7"
 
-"@farcaster/frame-core@0.0.29", "@farcaster/frame-core@^0.0.29":
-  version "0.0.29"
-  resolved "https://registry.yarnpkg.com/@farcaster/frame-core/-/frame-core-0.0.29.tgz#328907fafc238d24806ce0923ab82f179a5f390f"
-  integrity sha512-+iQjOS4OE0YCeW7hhBOg0QK8Pch7/C3mlkfD0OLey0Thnj4Uab4tWmvmfKxnsJNSYnESx9BT+Sw/pn9cueCl1Q==
+"@farcaster/frame-core@0.0.32", "@farcaster/frame-core@^0.0.32":
+  version "0.0.32"
+  resolved "https://registry.yarnpkg.com/@farcaster/frame-core/-/frame-core-0.0.32.tgz#7d34b698aebde91d01d1a6fe221684dccf9dbb55"
+  integrity sha512-WkOa3Eq2cVQpHuykUn538SJNea7DZul+MqjjGjIZGjo0ScjRR09Ql9QmxG1twsRQrsp0jokpBCIMBBHnhwoaxQ==
   dependencies:
     ox "^0.4.4"
     zod "^3.24.1"
 
-"@farcaster/frame-node@^0.0.18":
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/@farcaster/frame-node/-/frame-node-0.0.18.tgz#36ae17eb3ef586785d56ef1e8485be7adc634e41"
-  integrity sha512-MBx8NDQTs/RLK6oZ5s7SnonK98mqyOAm7iYk9WMrFCvNILSrhNX86GaL7mrU0CHw9tmHSMFcvzmGR0GSi4V4XQ==
+"@farcaster/frame-node@^0.0.21":
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/@farcaster/frame-node/-/frame-node-0.0.21.tgz#df9ee1720b0ed4a57fdc69d6fd623d619c8476a5"
+  integrity sha512-Yqcaw5VhaCSf4w5ptrOBtYFrVwIOCBqmg/C+hsZr9P4x4H4IWKi3gCHrLVTe8DXQT91AV5BGRbDv7GQz2oDGIg==
   dependencies:
-    "@farcaster/frame-core" "0.0.29"
+    "@farcaster/frame-core" "0.0.32"
     "@noble/curves" "^1.7.0"
     ox "^0.4.4"
     zod "^3.24.1"
 
-"@farcaster/frame-sdk@^0.0.31":
-  version "0.0.31"
-  resolved "https://registry.yarnpkg.com/@farcaster/frame-sdk/-/frame-sdk-0.0.31.tgz#e5e44c02f6bb2a8a5ae16827d3f8423bed5ed861"
-  integrity sha512-ZRFA4HyfE1PIcEi++27ulSqrArv2qdVeYww7juM90DYgvqyGLtX6cTZS0UEoRL7iog2U8Rv2aq1ORLbePCBZuA==
+"@farcaster/frame-sdk@^0.0.35":
+  version "0.0.35"
+  resolved "https://registry.yarnpkg.com/@farcaster/frame-sdk/-/frame-sdk-0.0.35.tgz#d21a99fb1e564af7ffe1d91326d16136de200a00"
+  integrity sha512-AXRUNWjY6y5XwqzfnKuZVo5bBboq+nSDVLTOHGiJ6Ie2aU4SF+1nwu7U8ttB1JQl6Yzn3foe7Qjnr9Ij5VfccA==
   dependencies:
-    "@farcaster/frame-core" "0.0.29"
+    "@farcaster/frame-core" "0.0.32"
     comlink "^4.4.2"
     eventemitter3 "^5.0.1"
     ox "^0.4.4"
 
-"@farcaster/frame-wagmi-connector@^0.0.19":
-  version "0.0.19"
-  resolved "https://registry.yarnpkg.com/@farcaster/frame-wagmi-connector/-/frame-wagmi-connector-0.0.19.tgz#e39be5ab32f63c32aee37e116e4db57898ab2db1"
-  integrity sha512-Ey9lEEk4SudkOiTtqY2eMGVTFZwW1lLMEtnAYqb7dCc/mDQowj3GfxNW9a2bdPoq5UEwAwJxxLiVvdERI+Hy3A==
+"@farcaster/frame-wagmi-connector@^0.0.23":
+  version "0.0.23"
+  resolved "https://registry.yarnpkg.com/@farcaster/frame-wagmi-connector/-/frame-wagmi-connector-0.0.23.tgz#a503366f974d3cecb8bde21b79318f0baca829e5"
+  integrity sha512-09Fw+hAx3SLvt7ouMgaJPlgNXAXNwKHH60StzxoBYqmvcQg1OrnxxiWeEINKCiooMnN2qn4mGTTlyRPJVzzJYg==
 
 "@humanwhocodes/config-array@^0.13.0":
   version "0.13.0"
