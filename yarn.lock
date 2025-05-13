@@ -158,20 +158,20 @@
     ox "^0.4.4"
     zod "^3.24.1"
 
-"@farcaster/frame-sdk@^0.0.40":
-  version "0.0.40"
-  resolved "https://registry.yarnpkg.com/@farcaster/frame-sdk/-/frame-sdk-0.0.40.tgz#e472c11466f25102ccd539f9c54919ea4ee1c4a5"
-  integrity sha512-Pjd7NZDyUxAuFgsmXcsj+T61qFKUiZiuHMM0wTq3Z9tfEEWNv9L6jxY3O+K0cAsU5AZFPCvJq00r523F37FMLA==
+"@farcaster/frame-sdk@^0.0.41":
+  version "0.0.41"
+  resolved "https://registry.yarnpkg.com/@farcaster/frame-sdk/-/frame-sdk-0.0.41.tgz#134d1b6028bdfc64085e025dd952c3b64c23ade1"
+  integrity sha512-JYIRFg2ikf2z96cVLXYTaZVrUDxWjzKVlq7Eq9bJVClkQxpAUl/sARwvokx8pQAcSl7nQiemeF0nE1qvn3ZBYQ==
   dependencies:
     "@farcaster/frame-core" "0.0.36"
     comlink "^4.4.2"
     eventemitter3 "^5.0.1"
     ox "^0.4.4"
 
-"@farcaster/frame-wagmi-connector@^0.0.27":
-  version "0.0.27"
-  resolved "https://registry.yarnpkg.com/@farcaster/frame-wagmi-connector/-/frame-wagmi-connector-0.0.27.tgz#430f53073f055a5f94db97d76c49d0ef4e7b140a"
-  integrity sha512-eck3ysY5FL0Kd418cQzxgOTcISCcOQa3flMOcFWdGESnulnlIlNGuysLrJynXb1dTNsz0oVnh6lTW8NNb6z7pw==
+"@farcaster/frame-wagmi-connector@^0.0.29":
+  version "0.0.29"
+  resolved "https://registry.yarnpkg.com/@farcaster/frame-wagmi-connector/-/frame-wagmi-connector-0.0.29.tgz#814701b562288d3945afec704080d75fa900aeb7"
+  integrity sha512-NsaNgiRjQuQNjgnd5epDGjYq9LVHjVmQyoFIPjFXOmPhcGm67vSBdtVNYOnhfvQtnPIrGrIRKy1xeBPR2CFn4A==
 
 "@humanwhocodes/config-array@^0.13.0":
   version "0.13.0"
