@@ -139,31 +139,31 @@
     qrcode "^1.5.3"
     react-remove-scroll "^2.5.7"
 
-"@farcaster/frame-core@0.0.35", "@farcaster/frame-core@^0.0.35":
-  version "0.0.35"
-  resolved "https://registry.yarnpkg.com/@farcaster/frame-core/-/frame-core-0.0.35.tgz#62e546edc1f34ce77f1ccfa81a16fdad180cd5da"
-  integrity sha512-wJN3ShVx4lC4/1QeEJuzZDXZ39+1Oempfbv9AOxwCafU6Mhp5ATGvlAQrz69INa4pNnENqhocH0E6dywrTZFCQ==
+"@farcaster/frame-core@0.0.36", "@farcaster/frame-core@^0.0.36":
+  version "0.0.36"
+  resolved "https://registry.yarnpkg.com/@farcaster/frame-core/-/frame-core-0.0.36.tgz#e0f7c64c690c8edd1bf6231d7c30f378efb850a2"
+  integrity sha512-hEjCGSYSZDkXFJX9I42zXJDBYonIWjEVAj4rvlLFwZBa66Wd27AIIBgfeO9+qwWpYaQ+KHMh9UM7n3qDcmF61A==
   dependencies:
     "@solana/web3.js" "^1.98.2"
     ox "^0.4.4"
     zod "^3.24.1"
 
-"@farcaster/frame-node@^0.0.24":
-  version "0.0.24"
-  resolved "https://registry.yarnpkg.com/@farcaster/frame-node/-/frame-node-0.0.24.tgz#1207d56c6cbd8b8ff4940c65d48a5d1b8ef15732"
-  integrity sha512-IuJBJWORePCthf2CiGpAKYMxUtOCdoi4HSNqgZHqz44HyP0Qhe6FhEmrIH9fsljqfwplAWM4/3zZsLkk20MlYg==
+"@farcaster/frame-node@^0.0.25":
+  version "0.0.25"
+  resolved "https://registry.yarnpkg.com/@farcaster/frame-node/-/frame-node-0.0.25.tgz#2aa206e40e4407673c22d92f656fe547b1be1651"
+  integrity sha512-jBEDoFnbYIpmqxfxjqVW6iWwLuto4ysU95t8PdMRh4BLgdIWN27WHrlZ94a3/BCDjCnUTseZnLPrTQCJKGz5pw==
   dependencies:
-    "@farcaster/frame-core" "0.0.35"
+    "@farcaster/frame-core" "0.0.36"
     "@noble/curves" "^1.7.0"
     ox "^0.4.4"
     zod "^3.24.1"
 
-"@farcaster/frame-sdk@^0.0.39":
-  version "0.0.39"
-  resolved "https://registry.yarnpkg.com/@farcaster/frame-sdk/-/frame-sdk-0.0.39.tgz#201ca2f8973b19c8bd686f1273176a2c0842b4ff"
-  integrity sha512-v3cdsjM7J0DlqZiSuBaJ1dQSdUHH8co7DXx0JEPVP9IuD/1x4E8nitNYk/k9uHPxOx/WNoRbEnB9chLQVMDvcA==
+"@farcaster/frame-sdk@^0.0.40":
+  version "0.0.40"
+  resolved "https://registry.yarnpkg.com/@farcaster/frame-sdk/-/frame-sdk-0.0.40.tgz#e472c11466f25102ccd539f9c54919ea4ee1c4a5"
+  integrity sha512-Pjd7NZDyUxAuFgsmXcsj+T61qFKUiZiuHMM0wTq3Z9tfEEWNv9L6jxY3O+K0cAsU5AZFPCvJq00r523F37FMLA==
   dependencies:
-    "@farcaster/frame-core" "0.0.35"
+    "@farcaster/frame-core" "0.0.36"
     comlink "^4.4.2"
     eventemitter3 "^5.0.1"
     ox "^0.4.4"

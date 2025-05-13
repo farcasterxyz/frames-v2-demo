@@ -1,10 +1,16 @@
 "use client";
 
+import {
+  Connection as SolanaConnection,
+  PublicKey as SolanaPublicKey,
+  SystemProgram as SolanaSystemProgram,
+  Transaction as SolanaTransaction,
+} from "@solana/web3.js";
 import { useEffect, useCallback, useState, useMemo } from "react";
 import { Input } from "../components/ui/input";
 import { signIn, signOut, getCsrfToken } from "next-auth/react";
 import sdk, {
-  AddFrame,
+  AddMiniApp,
   ComposeCast,
   FrameNotificationDetails,
   SignIn as SignInCore,
@@ -142,8 +148,9 @@ export default function Demo(
         console.log("primaryButtonClicked");
       });
 
-      sdk.wallet.ethProvider.on("chainChanged", (chainId) => {
-        console.log("[ethProvider] chainChanged", chainId)
+      const evmProvider = await sdk.wallet.getEvmProvider();
+      evmProvider?.on("chainChanged", (chainId) => {
+        console.log("[evmProvider] chainChanged", chainId)
       })
 
       sdk.actions.ready({});
@@ -193,11 +200,11 @@ export default function Demo(
           : "Added, got no notification details"
       );
     } catch (error) {
-      if (error instanceof AddFrame.RejectedByUser) {
+      if (error instanceof AddMiniApp.RejectedByUser) {
         setAddFrameResult(`Not added: ${error.message}`);
       }
 
-      if (error instanceof AddFrame.InvalidDomainManifest) {
+      if (error instanceof AddMiniApp.InvalidDomainManifest) {
         setAddFrameResult(`Not added: ${error.message}`);
       }
 
@@ -273,10 +280,11 @@ export default function Demo(
     setIsContextOpen((prev) => !prev);
   }, []);
 
-  const { solanaProvider } = sdk.experimental;
+  const { getSolanaProvider } = sdk.experimental;
   const [solanaAddress, setSolanaAddress] = useState("");
   useEffect(() => {
     (async () => {
+      const solanaProvider = await getSolanaProvider();
       if (!solanaProvider) {
         return;
       }
@@ -285,7 +293,7 @@ export default function Demo(
       });
       setSolanaAddress(result?.publicKey.toString());
     })();
-  }, [solanaProvider]);
+  }, [getSolanaProvider]);
 
   if (!isSDKLoaded) {
     return <div>Loading...</div>;
@@ -527,6 +535,9 @@ export default function Demo(
             <div className="mb-4">
               <SignSolanaMessage />
             </div>
+            <div className="mb-4">
+              <SendSolana />
+            </div>
           </div>
         )}
       </div>
@@ -661,10 +672,11 @@ function SignSolanaMessage() {
   const [signError, setSignError] = useState<Error | undefined>();
   const [signPending, setSignPending] = useState(false);
 
+  const { getSolanaProvider } = sdk.experimental;
   const handleSignMessage = useCallback(async () => {
     setSignPending(true);
     try {
-      const { solanaProvider } = sdk.experimental;
+      const solanaProvider = await getSolanaProvider();
       if (!solanaProvider) {
         throw new Error('no Solana provider');
       }
@@ -694,6 +706,96 @@ function SignSolanaMessage() {
       {signature && (
         <div className="mt-2 text-xs">
           <div>Signature: {signature}</div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// I am collecting lamports to buy a boat
+const ashoatsPhantomSolanaWallet =
+  'Ao3gLNZAsbrmnusWVqQCPMrcqNi6jdYgu8T6NCoXXQu1';
+
+const solanaConnection = new SolanaConnection(
+  //'https://api.mainnet-beta.solana.com',
+  'https://mainnet.helius-rpc.com/?api-key=108b847e-331a-46aa-a56a-42e7f4df4aa7',
+  'confirmed',
+);
+
+function SendSolana() {
+  const [state, setState] = useState<
+    | { status: 'none' }
+    | { status: 'pending' }
+    | { status: 'error'; error: Error }
+    | { status: 'success'; signature: string }
+  >({ status: 'none' });
+
+  const { getSolanaProvider } = sdk.experimental;
+  const handleSend = useCallback(async () => {
+    setState({ status: 'pending' });
+    try {
+      const solanaProvider = await getSolanaProvider();
+      if (!solanaProvider) {
+        throw new Error('no Solana provider');
+      }
+
+      const result = await solanaProvider.request({
+        method: 'connect',
+      });
+      const ourSolanaAddress = result?.publicKey.toString();
+      if (!ourSolanaAddress) {
+        throw new Error('failed to fetch Solana address');
+      }
+
+      const { blockhash } = await solanaConnection.getLatestBlockhash();
+      if (!blockhash) {
+        throw new Error('failed to fetch latest Solana blockhash');
+      }
+
+      const transaction = new SolanaTransaction();
+      transaction.add(
+        SolanaSystemProgram.transfer({
+          fromPubkey: new SolanaPublicKey(ourSolanaAddress),
+          toPubkey: new SolanaPublicKey(ashoatsPhantomSolanaWallet),
+          lamports: 1n,
+        }),
+      );
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = new SolanaPublicKey(ourSolanaAddress);
+
+      const simulation =
+        await solanaConnection.simulateTransaction(transaction);
+      if (simulation.value.err) {
+        throw new Error('Simulation failed');
+      }
+
+      const { signature } = await solanaProvider.signAndSendTransaction({
+        transaction,
+      });
+      setState({ status: 'success', signature });
+    } catch (e) {
+      if (e instanceof Error) {
+        setState({ status: 'error', error: e });
+      } else {
+        setState({ status: 'none' });
+      }
+      throw e;
+    }
+  }, [getSolanaProvider]);
+
+  return (
+    <>
+      <Button
+        onClick={handleSend}
+        disabled={state.status === 'pending'}
+        isLoading={state.status === 'pending'}
+      >
+        Send Transaction
+      </Button>
+      {state.status === 'error' && renderError(state.error)}
+      {state.status === 'success' && (
+        <div className="mt-2 text-xs">
+          <div>Hash: {truncateAddress(state.signature)}</div>
         </div>
       )}
     </>
