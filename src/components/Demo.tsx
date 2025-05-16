@@ -149,9 +149,9 @@ export default function Demo(
         console.log("primaryButtonClicked");
       });
 
-      const evmProvider = await sdk.wallet.getEvmProvider();
-      evmProvider?.on("chainChanged", (chainId) => {
-        console.log("[evmProvider] chainChanged", chainId)
+      const ethereumProvider = await sdk.wallet.getEthereumProvider();
+      ethereumProvider?.on("chainChanged", (chainId) => {
+        console.log("[ethereumProvider] chainChanged", chainId)
       })
 
       sdk.actions.ready({});
