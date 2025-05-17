@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import { Json } from "ox";
 
 export async function GET(request: NextRequest) {
   const authorization = request.headers.get('authorization');
