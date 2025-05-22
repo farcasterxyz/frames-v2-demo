@@ -292,8 +292,7 @@ export default function Demo(
     setIsContextOpen((prev) => !prev);
   }, []);
 
-  const solanaWallet = useSolanaWallet();
-  const { publicKey: solanaPublicKey } = solanaWallet;
+  const { publicKey: solanaPublicKey } = useSolanaWallet();
   const solanaAddress = solanaPublicKey?.toBase58();
 
   if (!isSDKLoaded) {
