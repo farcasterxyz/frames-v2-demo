@@ -1,9 +1,17 @@
 "use client";
 
-import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, createTransferCheckedInstruction, createApproveInstruction } from "@solana/spl-token";
+import {
+  getAssociatedTokenAddress,
+  createAssociatedTokenAccountInstruction,
+  createTransferCheckedInstruction,
+  createApproveInstruction,
+} from "@solana/spl-token";
+import {
+  useConnection as useSolanaConnection,
+  useWallet as useSolanaWallet,
+} from '@solana/wallet-adapter-react';
 import { jwtDecode } from "jwt-decode";
 import {
-  Connection as SolanaConnection,
   PublicKey as SolanaPublicKey,
   SystemProgram as SolanaSystemProgram,
   Transaction as SolanaTransaction,
@@ -284,20 +292,9 @@ export default function Demo(
     setIsContextOpen((prev) => !prev);
   }, []);
 
-  const { getSolanaProvider } = sdk.experimental;
-  const [solanaAddress, setSolanaAddress] = useState("");
-  useEffect(() => {
-    (async () => {
-      const solanaProvider = await getSolanaProvider();
-      if (!solanaProvider) {
-        return;
-      }
-      const result = await solanaProvider.request({
-        method: 'connect',
-      });
-      setSolanaAddress(result?.publicKey.toString());
-    })();
-  }, [getSolanaProvider]);
+  const solanaWallet = useSolanaWallet();
+  const { publicKey: solanaPublicKey } = solanaWallet;
+  const solanaAddress = solanaPublicKey?.toBase58();
 
   if (!isSDKLoaded) {
     return <div>Loading...</div>;
@@ -678,16 +675,17 @@ function SignSolanaMessage() {
   const [signError, setSignError] = useState<Error | undefined>();
   const [signPending, setSignPending] = useState(false);
 
-  const { getSolanaProvider } = sdk.experimental;
+  const { signMessage } = useSolanaWallet();
   const handleSignMessage = useCallback(async () => {
     setSignPending(true);
     try {
-      const solanaProvider = await getSolanaProvider();
-      if (!solanaProvider) {
-        throw new Error('no Solana provider');
+      if (!signMessage) {
+        throw new Error('no Solana signMessage');
       }
-      const result = await solanaProvider.signMessage("Hello from Frames v2!");
-      setSignature(result.signature);
+      const input = Buffer.from("Hello from Frames v2!", "utf8");
+      const signatureBytes = await signMessage(input);
+      const signature = Buffer.from(signatureBytes).toString("base64");
+      setSignature(signature);
       setSignError(undefined);
     } catch (e) {
       if (e instanceof Error) {
@@ -697,8 +695,7 @@ function SignSolanaMessage() {
     } finally {
       setSignPending(false);
     }
-  }, [getSolanaProvider]);
-
+  }, [signMessage]);
 
   return (
     <>
@@ -723,12 +720,6 @@ function SignSolanaMessage() {
 const ashoatsPhantomSolanaWallet =
   'Ao3gLNZAsbrmnusWVqQCPMrcqNi6jdYgu8T6NCoXXQu1';
 
-const solanaConnection = new SolanaConnection(
-  // This is a free RPC without credit card linked, steal at your own will
-  'https://mainnet.helius-rpc.com/?api-key=63185c9d-1a75-492a-ba9c-2dbac8e9434d',
-  'confirmed',
-);
-
 function SendTokenSolana() {
   const [state, setState] = useState<
     | { status: 'none' }
@@ -740,31 +731,12 @@ function SendTokenSolana() {
   const [selectedSymbol, setSelectedSymbol] = useState(''); // Initialize with empty string
   const [associatedMapping, setAssociatedMapping] = useState<{ token: string, decimals: number } | undefined>(undefined);
 
-  const [destinationAddress, setDestinationAddress] = useState('');
+  const { publicKey, sendTransaction } = useSolanaWallet();
+  const solanaAddress = publicKey?.toBase58();
+
+  const [destinationAddress, setDestinationAddress] = useState(solanaAddress ?? '');
   const [simulation, setSimulation] = useState('');
   const [useVersionedTransaction, setUseVersionedTransaction] = useState(false);
-
-  const { getSolanaProvider } = sdk.experimental;
-
-  const setCurrentAddress = useCallback(async () => {
-    const solanaProvider = await getSolanaProvider();
-    if (!solanaProvider) {
-      throw new Error('No Solana provider found. Make sure your wallet is connected and configured.');
-    }
-
-    // The connect method is often called when the app loads or when the user explicitly connects their wallet.
-    // It might not be needed right before every transaction if the wallet is already connected.
-    // However, calling it here ensures we have the public key.
-    const connectResult = await solanaProvider.request({
-      method: 'connect',
-      // params: [{ onlyIfTrusted: true }] // Optional: attempt to connect without a popup if already trusted
-    });
-    setDestinationAddress(connectResult?.publicKey);
-  }, [getSolanaProvider])
-
-  useEffect(() => {
-    setCurrentAddress();
-  }, [setCurrentAddress])
 
   const tokenOptions = [
     { label: 'Select a token', value: '', disabled: true }, // Added a disabled default option
@@ -814,8 +786,13 @@ function SendTokenSolana() {
     });
   };
 
+  const { connection: solanaConnection } = useSolanaConnection();
 
   const handleApprove = useCallback(async () => {
+    if (!publicKey) {
+      throw new Error('no Solana publicKey');
+    }
+
     if (!selectedSymbol || !associatedMapping) {
       setState({ status: 'error', error: new Error('Please select a token to approve.') });
       return;
@@ -828,20 +805,6 @@ function SendTokenSolana() {
 
     setState({ status: 'pending' });
     try {
-      const solanaProvider = await getSolanaProvider();
-      if (!solanaProvider) {
-        throw new Error('No Solana provider found. Make sure your wallet is connected and configured.');
-      }
-
-      const connectResult = await solanaProvider.request({
-        method: 'connect',
-      });
-
-      const warpletPublicKey = new SolanaPublicKey(connectResult?.publicKey);
-      if (!connectResult || typeof connectResult !== 'object' || !('publicKey' in connectResult) || !connectResult.publicKey) {
-        throw new Error('Failed to connect to Solana wallet or fetch public key.');
-      }
-
       const { blockhash } = await solanaConnection.getLatestBlockhash();
       if (!blockhash) {
         throw new Error('Failed to fetch the latest Solana blockhash.');
@@ -863,7 +826,7 @@ function SendTokenSolana() {
       // Get the owner's ATA for the token
       const ownerAta = await getAssociatedTokenAddress(
         tokenMintPublicKey,
-        warpletPublicKey
+        publicKey,
       );
 
       // Add the approve instruction
@@ -871,20 +834,20 @@ function SendTokenSolana() {
         createApproveInstruction(
           ownerAta,             // Token account to approve from
           spenderPublicKey,     // Account authorized to transfer tokens
-          warpletPublicKey,     // Owner of the token account
+          publicKey,            // Owner of the token account
           amountInSmallestUnit  // Amount to approve in smallest units
         )
       );
 
       transaction.recentBlockhash = blockhash;
-      transaction.feePayer = new SolanaPublicKey(warpletPublicKey);
+      transaction.feePayer = new SolanaPublicKey(publicKey);
 
       let finalTransaction: SolanaTransaction | VersionedTransaction = transaction;
 
       if (useVersionedTransaction) {
         // Create a v0 compatible message
         const messageV0 = new TransactionMessage({
-          payerKey: warpletPublicKey,
+          payerKey: publicKey,
           recentBlockhash: blockhash,
           instructions: transaction.instructions,
         }).compileToV0Message();
@@ -895,9 +858,10 @@ function SendTokenSolana() {
       }
 
       console.log('Simulating approval transaction:', finalTransaction);
-      const { signature } = await solanaProvider.signAndSendTransaction({
-        transaction: finalTransaction,
-      });
+      const signature = await sendTransaction(
+        finalTransaction,
+        solanaConnection,
+      );
       setState({ status: 'success', signature, type: 'approve' });
       console.log('Approval transaction successful, signature:', signature);
 
@@ -909,10 +873,21 @@ function SendTokenSolana() {
         setState({ status: 'error', error: new Error(String(e)) });
       }
     }
-  }, [getSolanaProvider, selectedSymbol, associatedMapping, destinationAddress, useVersionedTransaction])
-
+  }, [
+    publicKey,
+    sendTransaction,
+    selectedSymbol,
+    associatedMapping,
+    destinationAddress,
+    useVersionedTransaction,
+    solanaConnection,
+  ])
 
   const handleSend = useCallback(async () => {
+    if (!publicKey) {
+      throw new Error('no Solana publicKey');
+    }
+
     if (!selectedSymbol || !associatedMapping) {
       setState({ status: 'error', error: new Error('Please select a token to send.') });
       return;
@@ -920,24 +895,6 @@ function SendTokenSolana() {
 
     setState({ status: 'pending' });
     try {
-      const solanaProvider = await getSolanaProvider();
-      if (!solanaProvider) {
-        throw new Error('No Solana provider found. Make sure your wallet is connected and configured.');
-      }
-
-      // The connect method is often called when the app loads or when the user explicitly connects their wallet.
-      // It might not be needed right before every transaction if the wallet is already connected.
-      // However, calling it here ensures we have the public key.
-      const connectResult = await solanaProvider.request({
-        method: 'connect',
-        // params: [{ onlyIfTrusted: true }] // Optional: attempt to connect without a popup if already trusted
-      });
-
-      const warpletPublicKey = new SolanaPublicKey(connectResult?.publicKey);
-      // Type guard to ensure connectResult is not null and has a publicKey
-      if (!connectResult || typeof connectResult !== 'object' || !('publicKey' in connectResult) || !connectResult.publicKey) {
-        throw new Error('Failed to connect to Solana wallet or fetch public key.');
-      }
       const { blockhash } = await solanaConnection.getLatestBlockhash();
       if (!blockhash) {
         throw new Error('Failed to fetch the latest Solana blockhash.');
@@ -960,13 +917,13 @@ function SendTokenSolana() {
       // 1. Get the sender's ATA for the token
       const fromAta = await getAssociatedTokenAddress(
         tokenMintPublicKey,
-        warpletPublicKey
+        publicKey,
       );
 
       // 2. Get the recipient's ATA for the token
       const toAta = await getAssociatedTokenAddress(
         tokenMintPublicKey,
-        recipientPublicKey
+        recipientPublicKey,
       );
 
       // 3. Check if the recipient's ATA exists. If not, add an instruction to create it.
@@ -975,7 +932,7 @@ function SendTokenSolana() {
         console.log(`Recipient's Associated Token Account (${toAta.toBase58()}) for ${selectedSymbol} does not exist. Creating it.`);
         transaction.add(
           createAssociatedTokenAccountInstruction(
-            warpletPublicKey,
+            publicKey,
             toAta,
             recipientPublicKey,
             tokenMintPublicKey
@@ -990,7 +947,7 @@ function SendTokenSolana() {
           fromAta,                // Source_associated_token_account
           tokenMintPublicKey,     // Token mint_address
           toAta,                  // Destination_associated_token_account
-          warpletPublicKey,     // Wallet address of the owner of the source account
+          publicKey,              // Wallet address of the owner of the source account
           amountInSmallestUnit,   // Amount, in smallest units (e.g., lamports for SOL, or smallest unit for the token)
           associatedMapping.decimals // Decimals of the token (for validation)
           // [],                  // Optional: multiSigners
@@ -1009,14 +966,14 @@ function SendTokenSolana() {
       // To send the selected token, you would use associatedMapping.token (mint address)
       // and associatedMapping.decimals.
       transaction.recentBlockhash = blockhash;
-      transaction.feePayer = new SolanaPublicKey(warpletPublicKey);
+      transaction.feePayer = new SolanaPublicKey(publicKey);
 
       let finalTransaction: SolanaTransaction | VersionedTransaction = transaction;
 
       if (useVersionedTransaction) {
         // Create a v0 compatible message
         const messageV0 = new TransactionMessage({
-          payerKey: warpletPublicKey,
+          payerKey: publicKey,
           recentBlockhash: blockhash,
           instructions: transaction.instructions,
         }).compileToV0Message();
@@ -1032,14 +989,10 @@ function SendTokenSolana() {
       );
       setSimulation(JSON.stringify(simulation.value));
 
-      // The provider's signAndSendTransaction method might take the transaction directly
-      // or might require it to be serialized. Check your provider's documentation.
-      // For Phantom, typically you pass the Transaction object.
-      const { signature } = await solanaProvider.signAndSendTransaction({
-        transaction: finalTransaction, // Pass the SolanaTransaction or VersionedTransaction object
-        // requestPayer: ourSolanaAddress, // some providers might need this
-        // network: 'devnet', // some providers might need this
-      });
+      const signature = await sendTransaction(
+        finalTransaction,
+        solanaConnection,
+      );
       setState({ status: 'success', signature, type: 'send' });
       console.log('Transaction successful, signature:', signature);
 
@@ -1054,7 +1007,15 @@ function SendTokenSolana() {
       // Removed `throw e;` as it might cause unhandled promise rejection if not caught upstream.
       // The state update is usually sufficient for UI feedback.
     }
-  }, [getSolanaProvider, selectedSymbol, associatedMapping, destinationAddress, useVersionedTransaction]); // Added solanaConnection
+  }, [
+    publicKey,
+    sendTransaction,
+    selectedSymbol,
+    associatedMapping,
+    destinationAddress,
+    useVersionedTransaction,
+    solanaConnection,
+  ]);
 
   return (
     <div className="p-4 max-w-md mx-auto space-y-4"> {/* Added some basic styling for layout */}
@@ -1153,21 +1114,14 @@ function SendSolana() {
     | { status: 'success'; signature: string }
   >({ status: 'none' });
 
-  const { getSolanaProvider } = sdk.experimental;
+  const { connection: solanaConnection } = useSolanaConnection();
+  const { sendTransaction, publicKey } = useSolanaWallet();
+
   const handleSend = useCallback(async () => {
     setState({ status: 'pending' });
     try {
-      const solanaProvider = await getSolanaProvider();
-      if (!solanaProvider) {
-        throw new Error('no Solana provider');
-      }
-
-      const result = await solanaProvider.request({
-        method: 'connect',
-      });
-      const ourSolanaAddress = result?.publicKey.toString();
-      if (!ourSolanaAddress) {
-        throw new Error('failed to fetch Solana address');
+      if (!publicKey) {
+        throw new Error('no Solana publicKey');
       }
 
       const { blockhash } = await solanaConnection.getLatestBlockhash();
@@ -1178,13 +1132,13 @@ function SendSolana() {
       const transaction = new SolanaTransaction();
       transaction.add(
         SolanaSystemProgram.transfer({
-          fromPubkey: new SolanaPublicKey(ourSolanaAddress),
+          fromPubkey: publicKey,
           toPubkey: new SolanaPublicKey(ashoatsPhantomSolanaWallet),
           lamports: 1n,
         }),
       );
       transaction.recentBlockhash = blockhash;
-      transaction.feePayer = new SolanaPublicKey(ourSolanaAddress);
+      transaction.feePayer = publicKey;
 
       const simulation =
         await solanaConnection.simulateTransaction(transaction);
@@ -1192,9 +1146,7 @@ function SendSolana() {
         throw new Error('Simulation failed');
       }
 
-      const { signature } = await solanaProvider.signAndSendTransaction({
-        transaction,
-      });
+      const signature = await sendTransaction(transaction, solanaConnection);
       setState({ status: 'success', signature });
     } catch (e) {
       if (e instanceof Error) {
@@ -1204,7 +1156,7 @@ function SendSolana() {
       }
       throw e;
     }
-  }, [getSolanaProvider]);
+  }, [sendTransaction, publicKey, solanaConnection]);
 
   return (
     <>
