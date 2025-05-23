@@ -24,8 +24,8 @@ importers:
         specifier: ^0.0.39
         version: 0.0.39(@farcaster/frame-sdk@0.0.50(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.25.7))(@wagmi/core@2.16.5(@tanstack/query-core@5.60.6)(@types/react@18.3.12)(react@19.0.0-rc-66855b96-20241106)(typescript@5.7.2)(use-sync-external-store@1.4.0(react@19.0.0-rc-66855b96-20241106))(viem@2.23.6(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.25.7)))(viem@2.23.6(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.25.7))
       '@farcaster/mini-app-solana':
-        specifier: ^0.0.7
-        version: 0.0.7(@farcaster/frame-sdk@0.0.50(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.25.7))(@solana/wallet-adapter-base@0.9.26(@solana/web3.js@1.98.2(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)))(@solana/wallet-adapter-react@0.15.38(@solana/web3.js@1.98.2(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.79.2(@babel/core@7.27.1)(@types/react@18.3.12)(bufferutil@4.0.9)(react@19.0.0-rc-66855b96-20241106)(utf-8-validate@5.0.10))(react@19.0.0-rc-66855b96-20241106))(bufferutil@4.0.9)(react@19.0.0-rc-66855b96-20241106)(typescript@5.7.2)(utf-8-validate@5.0.10)
+        specifier: ^0.0.8
+        version: 0.0.8(@farcaster/frame-sdk@0.0.50(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.25.7))(@solana/wallet-adapter-base@0.9.26(@solana/web3.js@1.98.2(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)))(@solana/wallet-adapter-react@0.15.38(@solana/web3.js@1.98.2(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.79.2(@babel/core@7.27.1)(@types/react@18.3.12)(bufferutil@4.0.9)(react@19.0.0-rc-66855b96-20241106)(utf-8-validate@5.0.10))(react@19.0.0-rc-66855b96-20241106))(bufferutil@4.0.9)(react@19.0.0-rc-66855b96-20241106)(typescript@5.7.2)(utf-8-validate@5.0.10)
       '@farcaster/quick-auth':
         specifier: ^0.0.2
         version: 0.0.2(typescript@5.7.2)
@@ -364,8 +364,8 @@ packages:
       '@wagmi/core': ^2.14.1
       viem: ^2.21.55
 
-  '@farcaster/mini-app-solana@0.0.7':
-    resolution: {integrity: sha512-ug1x5YYLzyPd58GpqRBUFsWHtUU0FkpdP+oT+8iYU+3tzbWMPhXkEbq9ndArPa5Augw0i1XlzZHgmK3LiloXSQ==}
+  '@farcaster/mini-app-solana@0.0.8':
+    resolution: {integrity: sha512-poHQx4gU98tHQ3pC1yGJm/wT4D7CAsDCQwQbZL0QZl+cA4Px/wB6g1VBHVSBkz8SbeiiYk6B7TO9ha7gOG572w==}
     peerDependencies:
       '@farcaster/frame-sdk': '>=0.0.50'
       '@solana/wallet-adapter-base': '>=0.9.0'
@@ -4852,7 +4852,7 @@ snapshots:
       '@wagmi/core': 2.16.5(@tanstack/query-core@5.60.6)(@types/react@18.3.12)(react@19.0.0-rc-66855b96-20241106)(typescript@5.7.2)(use-sync-external-store@1.4.0(react@19.0.0-rc-66855b96-20241106))(viem@2.23.6(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.25.7))
       viem: 2.23.6(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.25.7)
 
-  '@farcaster/mini-app-solana@0.0.7(@farcaster/frame-sdk@0.0.50(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.25.7))(@solana/wallet-adapter-base@0.9.26(@solana/web3.js@1.98.2(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)))(@solana/wallet-adapter-react@0.15.38(@solana/web3.js@1.98.2(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.79.2(@babel/core@7.27.1)(@types/react@18.3.12)(bufferutil@4.0.9)(react@19.0.0-rc-66855b96-20241106)(utf-8-validate@5.0.10))(react@19.0.0-rc-66855b96-20241106))(bufferutil@4.0.9)(react@19.0.0-rc-66855b96-20241106)(typescript@5.7.2)(utf-8-validate@5.0.10)':
+  '@farcaster/mini-app-solana@0.0.8(@farcaster/frame-sdk@0.0.50(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.25.7))(@solana/wallet-adapter-base@0.9.26(@solana/web3.js@1.98.2(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)))(@solana/wallet-adapter-react@0.15.38(@solana/web3.js@1.98.2(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.79.2(@babel/core@7.27.1)(@types/react@18.3.12)(bufferutil@4.0.9)(react@19.0.0-rc-66855b96-20241106)(utf-8-validate@5.0.10))(react@19.0.0-rc-66855b96-20241106))(bufferutil@4.0.9)(react@19.0.0-rc-66855b96-20241106)(typescript@5.7.2)(utf-8-validate@5.0.10)':
     dependencies:
       '@farcaster/frame-core': 0.0.40(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)
       '@farcaster/frame-sdk': 0.0.50(bufferutil@4.0.9)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.25.7)

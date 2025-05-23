@@ -14,7 +14,7 @@
     "@farcaster/frame-node": "^0.0.29",
     "@farcaster/frame-sdk": "^0.0.50",
     "@farcaster/frame-wagmi-connector": "^0.0.39",
-    "@farcaster/mini-app-solana": "^0.0.7",
+    "@farcaster/mini-app-solana": "^0.0.8",
     "@farcaster/quick-auth": "^0.0.2",
     "@radix-ui/react-label": "^2.1.1",
     "@solana/spl-token": "^0.4.13",
