@@ -1,13 +1,18 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { sdk } from "@farcaster/frame-sdk"
+import sdk, { type Context } from "@farcaster/frame-sdk"
+import { Button } from "~/components/ui/Button"
 
 export default function Page() {
   const [hasHaptics, setHasHaptics] = useState(false)
+  const [context, setContext] = useState<Context.FrameContext>()
+  const [isSDKLoaded, setIsSDKLoaded] = useState(false)
 
   useEffect(() => {
     const initApp = async () => {
+      const context = await sdk.context
+      setContext(context)
       await sdk.actions.ready()
       const capabilities = await sdk.getCapabilities()
       console.log(`All capabilities: ${JSON.stringify(capabilities)}`)
@@ -19,6 +24,7 @@ export default function Page() {
         hasNotificationOccurred &&
         hasSelectionChanged
       )
+      setIsSDKLoaded(true)
     }
 
     initApp()
@@ -37,77 +43,102 @@ export default function Page() {
     await sdk.haptics.selectionChanged()
   }
 
+  if (!isSDKLoaded) {
+    return <div>Loading...</div>
+  }
+
   if (!hasHaptics) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-2xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Haptics SDK Demo</h1>
-          <p className="text-gray-600 text-sm mb-4">Your device does not support haptics.</p>
+      <div
+        style={{
+          paddingTop: context?.client.safeAreaInsets?.top ?? 0,
+          paddingBottom: context?.client.safeAreaInsets?.bottom ?? 0,
+          paddingLeft: context?.client.safeAreaInsets?.left ?? 0,
+          paddingRight: context?.client.safeAreaInsets?.right ?? 0,
+        }}
+      >
+        <div className="w-[300px] mx-auto py-2 px-2">
+          <h1 className="text-2xl font-bold text-center mb-4">Haptics Demo</h1>
+          <p className="text-sm mb-4">Your device does not support haptics.</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Haptics SDK Demo</h1>
+    <div
+      style={{
+        paddingTop: context?.client.safeAreaInsets?.top ?? 0,
+        paddingBottom: context?.client.safeAreaInsets?.bottom ?? 0,
+        paddingLeft: context?.client.safeAreaInsets?.left ?? 0,
+        paddingRight: context?.client.safeAreaInsets?.right ?? 0,
+      }}
+    >
+      <div className="w-[300px] mx-auto py-2 px-2">
+        <h1 className="text-2xl font-bold text-center mb-4">Haptics Demo</h1>
 
-        {/* Impact Occurred Section */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Impact Occurred</h2>
-          <p className="text-gray-600 text-sm mb-4">Test different impact feedback types</p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <button onClick={() => impactOccurred('light')} className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
-              Light
-            </button>
-            <button onClick={() => impactOccurred('medium')} className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors">
-              Medium
-            </button>
-            <button onClick={() => impactOccurred('heavy')} className="bg-blue-700 hover:bg-blue-800 text-white font-medium py-3 px-4 rounded-lg transition-colors">
-              Heavy
-            </button>
-            <button onClick={() => impactOccurred('soft')} className="bg-purple-500 hover:bg-purple-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
-              Soft
-            </button>
-            <button onClick={() => impactOccurred('rigid')} className="bg-purple-700 hover:bg-purple-800 text-white font-medium py-3 px-4 rounded-lg transition-colors">
-              Rigid
-            </button>
+        <div>
+          <h2 className="font-2xl font-bold">Impact Feedback</h2>
+          
+          <div className="mb-4">
+            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+                sdk.haptics.impactOccurred
+              </pre>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <Button onClick={() => impactOccurred('light')}>Light</Button>
+              <Button onClick={() => impactOccurred('medium')}>Medium</Button>
+              <Button onClick={() => impactOccurred('heavy')}>Heavy</Button>
+              <Button onClick={() => impactOccurred('soft')}>Soft</Button>
+              <Button onClick={() => impactOccurred('rigid')}>Rigid</Button>
+            </div>
           </div>
         </div>
 
-        {/* Notification Occurred Section */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Notification Occurred</h2>
-          <p className="text-gray-600 text-sm mb-4">Test different notification feedback types</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <button onClick={() => notificationOccurred('success')} className="bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
-              <span className="text-lg">✓</span>
-              Success
-            </button>
-            <button onClick={() => notificationOccurred('warning')} className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
-              <span className="text-lg">⚠</span>
-              Warning
-            </button>
-            <button onClick={() => notificationOccurred('error')} className="bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
-              <span className="text-lg">✕</span>
-              Error
-            </button>
+        <div>
+          <h2 className="font-2xl font-bold">Notification Feedback</h2>
+          
+          <div className="mb-4">
+            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+                sdk.haptics.notificationOccurred
+              </pre>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              <Button onClick={() => notificationOccurred('success')} className="flex items-center justify-center gap-2">
+                <span>✓</span>
+                Success
+              </Button>
+              <Button onClick={() => notificationOccurred('warning')} className="flex items-center justify-center gap-2">
+                <span>⚠</span>
+                Warning
+              </Button>
+              <Button onClick={() => notificationOccurred('error')} className="flex items-center justify-center gap-2">
+                <span>✕</span>
+                Error
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* Selection Changed Section */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Selection Changed</h2>
-          <p className="text-gray-600 text-sm mb-4">Test selection feedback (no parameters)</p>
-          <button onClick={selectionChanged} className="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-3 px-6 rounded-lg transition-colors w-full sm:w-auto">
-            Trigger Selection Changed
-          </button>
+        <div>
+          <h2 className="font-2xl font-bold">Selection Feedback</h2>
+          
+          <div className="mb-4">
+            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+                sdk.haptics.selectionChanged
+              </pre>
+            </div>
+            <Button onClick={selectionChanged} className="w-full">
+              Trigger Selection Changed
+            </Button>
+          </div>
         </div>
 
-        {/* Info Section */}
-        <div className="mt-8 text-center text-gray-500 text-sm">
-          <p>Tap buttons to test haptic feedback on supported devices</p>
+        <div className="mt-4 text-center text-xs text-gray-500">
+          <p>Tap buttons to test haptic feedback</p>
         </div>
       </div>
     </div>
