@@ -44,7 +44,7 @@ import { config } from "~/components/providers/WagmiProvider";
 import { Button } from "~/components/ui/Button";
 import { truncateAddress } from "~/lib/truncateAddress";
 import { base, degen, mainnet, monadTestnet, optimism, unichain } from "wagmi/chains";
-import { BaseError, parseEther, UserRejectedRequestError } from "viem";
+import { BaseError, parseEther, UserRejectedRequestError, encodeFunctionData, parseAbi } from "viem";
 import { createStore } from "mipd";
 import { Label } from "~/components/ui/label";
 
@@ -1142,6 +1142,12 @@ function TestBatchOperation() {
   const [batchCallId, setBatchCallId] = useState<string | null>(null);
   const [batchCallResult, setBatchCallResult] = useState<string | null>(null);
 
+  // State for explicit USDC approve + MockTransfer.mockTransfer test (non-atomic)
+  const [isSendingApproveTransfer, setIsSendingApproveTransfer] = useState(false);
+  const [approveTransferId, setApproveTransferId] = useState<string | null>(null);
+  const [approveTransferResult, setApproveTransferResult] = useState<string | null>(null);
+  const [approveTransferError, setApproveTransferError] = useState<string | null>(null);
+
   const handleGetCapabilities = useCallback(async () => {
     if (!walletClient || !address) {
       setError('No wallet client or address');
@@ -1215,6 +1221,61 @@ function TestBatchOperation() {
     }
   }, [walletClient, address, forceAtomic, switchChain]);
 
+  const handleSendCallsApproveAndTransfer = useCallback(async () => {
+    if (!walletClient || !address) {
+      setApproveTransferError('No wallet client or address');
+      return;
+    }
+    // Ensure we are on Base for this test
+    switchChain({ chainId: base.id });
+
+    setIsSendingApproveTransfer(true);
+    setApproveTransferError(null);
+    setApproveTransferId(null);
+    setApproveTransferResult(null);
+
+    try {
+      const BASE_USDC = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
+      const MOCK_TRANSFER = '0xDC5A772d22558524cbBbfa8Ba6E83b5BebE45783';
+      const TEN_CENTS_USDC = 100_000n; // 0.10 USDC with 6 decimals
+
+      const approveData = encodeFunctionData({
+        abi: parseAbi(['function approve(address spender, uint256 value) returns (bool)']),
+        functionName: 'approve',
+        args: [MOCK_TRANSFER, TEN_CENTS_USDC],
+      });
+
+      const mockTransferData = encodeFunctionData({
+        abi: parseAbi(['function mockTransfer(uint256 amount)']),
+        functionName: 'mockTransfer',
+        args: [TEN_CENTS_USDC],
+      });
+
+      const { id } = await walletClient.sendCalls({
+        account: address,
+        chain: base,
+        // Explicitly non-atomic per request
+        forceAtomic: false,
+        calls: [
+          { to: BASE_USDC, value: 0n, data: approveData },
+          { to: MOCK_TRANSFER, value: 0n, data: mockTransferData },
+        ],
+      });
+
+      setApproveTransferId(id);
+
+      const result = await walletClient.waitForCallsStatus({
+        id,
+        pollingInterval: 200,
+      });
+      setApproveTransferResult(safeJsonStringify(result));
+    } catch (e) {
+      setApproveTransferError(e instanceof Error ? e.message : 'Unknown error');
+    } finally {
+      setIsSendingApproveTransfer(false);
+    }
+  }, [walletClient, address, switchChain]);
+
   return (
     <>
       <div className="mb-4">
@@ -1266,6 +1327,16 @@ function TestBatchOperation() {
           </Button>
         </div>
 
+        <div className="mb-4">
+          <Button
+            onClick={handleSendCallsApproveAndTransfer}
+            disabled={!isConnected || isSendingApproveTransfer}
+            isLoading={isSendingApproveTransfer}
+          >
+            SendCalls: Approve 10c USDC + mockTransfer (This will take 10c in USDC, use at your own discression)
+          </Button>
+        </div>
+
         {batchCallId && (
           <div className="mb-2 text-xs">
             Batch Call ID: {batchCallId}
@@ -1283,6 +1354,25 @@ function TestBatchOperation() {
 
         {error && (
           <div className="text-red-500 text-xs mt-1">{error}</div>
+        )}
+
+        {approveTransferId && (
+          <div className="mb-2 text-xs">
+            Approve + Transfer ID: {approveTransferId}
+          </div>
+        )}
+
+        {approveTransferResult && (
+          <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            <div className="font-semibold text-gray-500 dark:text-gray-300 mb-1">Approve + Transfer Result</div>
+            <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+              {approveTransferResult}
+            </pre>
+          </div>
+        )}
+
+        {approveTransferError && (
+          <div className="text-red-500 text-xs mt-1">{approveTransferError}</div>
         )}
       </div>
     </>
