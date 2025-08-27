@@ -175,6 +175,9 @@ export default function Demo(
       ethereumProvider?.on("chainChanged", (chainId) => {
         console.log("[ethereumProvider] chainChanged", chainId)
       })
+      ethereumProvider?.on("connect", (connectInfo) => {
+        console.log("[ethereumProvider] connect", connectInfo);
+      });
 
       sdk.actions.ready({});
 
