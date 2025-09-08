@@ -365,6 +365,15 @@ export default function Demo(
           <div className="mb-4">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
               <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+                sdk.experimental.signManifest
+              </pre>
+            </div>
+            <SignManifest />
+          </div>
+
+          <div className="mb-4">
+            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
                 sdk.actions.composeCast
               </pre>
             </div>
@@ -1530,6 +1539,73 @@ function QuickAuth({ setToken, token }: { setToken: (token: string | null) => vo
       )}
     </>
   );
+}
+
+function SignManifest() {
+  const [domain, setDomain] = useState('www.microsoft.com')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [result, setResult] = useState<unknown>(null)
+
+  const handleSignManifest = async () => {
+    setLoading(true)
+    setError(null)
+    setResult(null)
+
+    try {
+      const manifest = await sdk.experimental.signManifest({ domain })
+      setResult(manifest)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <Label
+          className="text-xs font-semibold text-gray-500 dark:text-gray-300 mb-1"
+          htmlFor="domain-input"
+        >
+          Domain
+        </Label>
+        <Input
+          id="domain-input"
+          type="text"
+          value={domain}
+          onChange={(e) => setDomain(e.target.value)}
+          className="w-full mb-2"
+          placeholder="Enter domain (e.g., http://www.microsoft.com)"
+        />
+      </div>
+
+      <Button
+        onClick={handleSignManifest}
+        disabled={loading || !domain}
+        isLoading={loading}
+      >
+        {loading ? 'Signing...' : 'Sign Manifest'}
+      </Button>
+
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-red-600 font-medium">Error:</p>
+          <p className="text-red-500">{error}</p>
+        </div>
+      )}
+
+      {result !== null && result !== undefined && (
+        <div className="p-4 bg-gray-50 border border-gray-200 rounded-md">
+          <p className="font-medium mb-2">Signed Manifest:</p>
+          <pre className="bg-white p-3 rounded border border-gray-300 overflow-x-auto">
+            {safeJsonStringify(result)}
+          </pre>
+        </div>
+      )}
+    </div>
+  )
 }
 
 function ViewProfile() {
