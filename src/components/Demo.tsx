@@ -365,6 +365,15 @@ export default function Demo(
           <div className="mb-4">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
               <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
+                sdk.experimental.signManifest
+              </pre>
+            </div>
+            <SignManifest />
+          </div>
+
+          <div className="mb-4">
+            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg my-2">
+              <pre className="font-mono text-xs whitespace-pre-wrap break-words max-w-[260px] overflow-x-">
                 sdk.actions.composeCast
               </pre>
             </div>
@@ -1536,7 +1545,7 @@ function SignManifest() {
   const [domain, setDomain] = useState('www.microsoft.com')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<unknown>(null)
 
   const handleSignManifest = async () => {
     setLoading(true)
@@ -1587,11 +1596,11 @@ function SignManifest() {
         </div>
       )}
 
-      {result && (
+      {result !== null && result !== undefined && (
         <div className="p-4 bg-gray-50 border border-gray-200 rounded-md">
           <p className="font-medium mb-2">Signed Manifest:</p>
           <pre className="bg-white p-3 rounded border border-gray-300 overflow-x-auto">
-            {JSON.stringify(result, null, 2)}
+            {safeJsonStringify(result)}
           </pre>
         </div>
       )}
