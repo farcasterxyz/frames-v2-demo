@@ -18,7 +18,7 @@ import {
   VersionedTransaction,
   TransactionMessage,
 } from "@solana/web3.js";
-import { useEffect, useCallback, useState, useMemo } from "react";
+import { useEffect, useCallback, useState, useMemo, type ChangeEvent } from "react";
 import { Input } from "../components/ui/input";
 import sdk, {
   AddMiniApp,
@@ -584,16 +584,57 @@ export default function Demo(
 }
 
 function ComposeCastAction() {
+  const channelOptions = useMemo(
+    () => [
+      { value: "", label: "No channel" },
+      { value: "staging", label: "staging" },
+      { value: "founders", label: "founders" },
+      { value: "bounties", label: "bounties" },
+      { value: "gaming", label: "gaming" },
+    ],
+    [],
+  );
+
   const [result, setResult] = useState<ComposeCast.Result>();
-  const compose = useCallback(async () => {
-    setResult(await sdk.actions.composeCast({
-      text: 'Hello from Demo Mini App',
-      embeds: ["https://test.com/foo%20bar"],
-    }))
+  const [channelKey, setChannelKey] = useState<string | undefined>(undefined);
+
+  const handleChannelChange = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
+    const { value } = event.target;
+    setChannelKey(value ? value : undefined);
   }, []);
 
+  const compose = useCallback(async () => {
+    setResult(
+      await sdk.actions.composeCast({
+        text: "Hello from Demo Mini App",
+        embeds: ["https://test.com/foo%20bar"],
+        channelKey,
+      }),
+    );
+  }, [channelKey]);
+
   return (
-    <>
+    <div className="flex flex-col gap-2">
+      <div>
+        <Label
+          className="text-xs font-semibold text-gray-500 dark:text-gray-300 mb-1"
+          htmlFor="compose-channel-select"
+        >
+          Select channel
+        </Label>
+        <select
+          id="compose-channel-select"
+          value={channelKey ?? ""}
+          onChange={handleChannelChange}
+          className="w-full p-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 rounded"
+        >
+          {channelOptions.map((option) => (
+            <option key={option.value || "none"} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
       <Button
         onClick={compose}
       >
@@ -604,7 +645,7 @@ function ComposeCastAction() {
           <div>Cast Hash: {result.cast?.hash}</div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
