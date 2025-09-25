@@ -596,6 +596,7 @@ function ComposeCastAction() {
   );
 
   const [result, setResult] = useState<ComposeCast.Result>();
+  const [error, setError] = useState<string | null>(null);
   const [channelKey, setChannelKey] = useState<string | undefined>(undefined);
 
   const handleChannelChange = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
@@ -604,13 +605,18 @@ function ComposeCastAction() {
   }, []);
 
   const compose = useCallback(async () => {
-    setResult(
-      await sdk.actions.composeCast({
+    setError(null);
+    setResult(undefined);
+    try {
+      const result = await sdk.actions.composeCast({
         text: "Hello from Demo Mini App",
         embeds: ["https://test.com/foo%20bar"],
         channelKey,
-      }),
-    );
+      });
+      setResult(result);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Unknown error occurred while composing cast');
+    }
   }, [channelKey]);
 
   return (
@@ -640,6 +646,11 @@ function ComposeCastAction() {
       >
         Compose Cast
       </Button>
+      {error && (
+        <div className="mt-2 text-xs text-red-500 dark:text-red-400">
+          {error}
+        </div>
+      )}
       {result && (
         <div className="mt-2 text-xs">
           <div>Cast Hash: {result.cast?.hash}</div>
