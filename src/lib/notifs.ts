@@ -45,7 +45,7 @@ export async function sendFrameNotification({
 
   const responseJson = await response.json();
 
-  if (response.status === 200) {
+  if (response.ok) {
     const responseBody = sendNotificationResponseSchema.safeParse(responseJson);
     if (responseBody.success === false) {
       // Malformed response
